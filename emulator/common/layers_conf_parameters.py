@@ -16,7 +16,7 @@ class LayerConfigurationParameters(Enum):
     ATTR_COMMON_TYPE = 'type'
     ATTR_COMMON_BOTTOM = 'bottom'
 
-    ATTR_ACTIVATIONS_SHAPE = 'shape'
+    ATTR_IO_SHAPE = 'shape'
     ATTR_AXIS = 'axis'
     ATTR_KERNEL_SIZE = 'ksize'
     ATTR_WEIGHTS_SHAPE = 'weights_shape'

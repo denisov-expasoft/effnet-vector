@@ -15,7 +15,10 @@ class SupportedLayerTypes(Enum):
     LAYER_CONV2D = 'conv2d_layer'
     LAYER_CONV2D_DEPTHWISE = 'conv2d_depthwise_layer'
     LAYER_FC = 'fully_connected_layer'
+    LAYER_MUL = 'mul_layer'
     LAYER_REDUCE_MEAN = 'reduce_mean_layer'
+    LAYER_SIGMOID = 'sigmoid_layer'
+    LAYER_SWISH = 'swish_layer'
 
     @classmethod
     def _missing_(cls, _):
