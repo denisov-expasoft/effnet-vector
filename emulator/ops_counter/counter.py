@@ -23,17 +23,17 @@ def get_info(op: BaseOperation):
         in_channels, out_channels = op.kernel_shape
         input_size = 1
     elif isinstance(op, Swish):
-        in_channels = -1
-        out_channels = -1
-        input_size = -1
+        in_channels = op.input_shape[-1]
+        out_channels = op.input_shape[-1]
+        input_size = op.input_shape[0]
     elif isinstance(op, Sigmoid):
-        in_channels = -1
-        out_channels = -1
-        input_size = -1
+        in_channels = op.input_shape[-1]
+        out_channels = op.input_shape[-1]
+        input_size = op.input_shape[0]
     elif isinstance(op, Mul):
-        in_channels = -1
-        out_channels = -1
-        input_size = -1
+        in_channels = op.input_shape[-1]
+        out_channels = op.input_shape[-1]
+        input_size = op.input_shape[0]
     else:
         raise ValueError('Encountered unknown operation %s.' % str(op))
     return input_size, kernel_size, in_channels, out_channels

@@ -3,6 +3,8 @@ import pickle
 from copy import deepcopy
 from pathlib import Path
 
+import numpy as np
+
 import emulator
 from emulator.common import GraphWalker
 from emulator.common import SupportedLayerTypes as Slt
@@ -18,7 +20,7 @@ _REGULAR_CONFIG_PATH = Path('model-data/regular.json')
 _QUANT_CONFIG_PATH = Path('model-data/conf.quant.json')
 _REGULAR_CONFIG_PATH = Path('model-data/conf.regular.json')
 
-_INPUT_IMG_SIZE = 224
+_INPUT_IMG_SIZE = 256
 
 
 def _add_input_shape(config, input_shape):
@@ -44,9 +46,19 @@ def _add_input_shape(config, input_shape):
             op_info: cfg_container.MatrixOps = layer_to_op_info(layer_cfg, config)
             output_shapes[layer_name] = op_info.output_shape
 
-        elif layer_type in [Slt.LAYER_ADD, Slt.LAYER_MUL, Slt.LAYER_SIGMOID, Slt.LAYER_SWISH]:
+        elif layer_type in [Slt.LAYER_ADD, Slt.LAYER_SIGMOID, Slt.LAYER_SWISH]:
             input_layers = layer_cfg[Lcp.ATTR_COMMON_BOTTOM.value]
             layer_cfg[Lcp.ATTR_INPUT_SHAPE.value] = deepcopy(output_shapes[input_layers[0]])
+            output_shapes[layer_name] = deepcopy(layer_cfg[Lcp.ATTR_INPUT_SHAPE.value])
+
+        elif layer_type is Slt.LAYER_MUL:
+            input_layers = layer_cfg[Lcp.ATTR_COMMON_BOTTOM.value]
+            # Broadcasting shapes (using numpy broadcasting to calculate the shape)
+            inp_shape_1, inp_shape_2 = output_shapes[input_layers[0]], output_shapes[input_layers[1]]
+            inp_shape = inp_shape_1[:1] + list(np.shape(
+                np.ones(inp_shape_1[1:]) * np.ones(inp_shape_2[1:])
+            ))
+            layer_cfg[Lcp.ATTR_INPUT_SHAPE.value] = deepcopy(inp_shape)
             output_shapes[layer_name] = deepcopy(layer_cfg[Lcp.ATTR_INPUT_SHAPE.value])
 
         elif layer_type is Slt.LAYER_REDUCE_MEAN:
@@ -77,11 +89,11 @@ def _add_input_shape(config, input_shape):
 
 
 def main():
-    # with _QUANT_CONFIG_PATH.open('r') as file:
-    #     config = json.load(file)
-
-    with _REGULAR_CONFIG_PATH.open('r') as file:
+    with _QUANT_CONFIG_PATH.open('r') as file:
         config = json.load(file)
+    #
+    # with _REGULAR_CONFIG_PATH.open('r') as file:
+    #     config = json.load(file)
 
     _add_input_shape(config, input_shape=[None, _INPUT_IMG_SIZE, _INPUT_IMG_SIZE, 3])
 

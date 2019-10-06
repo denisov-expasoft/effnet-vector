@@ -301,13 +301,19 @@ class Mul(BaseOperation):
             self,
             input_shape: List[int],
             input_bits: List[int],
+            output_bits: int,
     ):
         self._input_shape = input_shape
         self._input_bits = input_bits
+        self._output_bits = output_bits
 
     @property
     def quantized(self) -> bool:
         return any(i_bit < 16 for i_bit in self._input_bits)
+
+    @property
+    def output_quantized(self) -> bool:
+        return self._output_bits < 16
 
     @property
     def input_shape(self) -> List[int]:
@@ -316,3 +322,7 @@ class Mul(BaseOperation):
     @property
     def input_bits(self) -> List[int]:
         return self._input_bits
+
+    @property
+    def output_bits(self) -> int:
+        return self._output_bits

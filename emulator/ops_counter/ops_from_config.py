@@ -125,6 +125,7 @@ def layer_to_op_info(layer_cfg_data: Dict[str, Any], config: Dict[str, Any]) -> 
         return Mul(
             input_shape=layer_input_shape[1:],
             input_bits=_get_input_bits_for_layer(config, layer_cfg_data['bottom']),
+            output_bits=layer_cfg_data['activations_bits'],
         )
 
     raise NotImplementedError(
