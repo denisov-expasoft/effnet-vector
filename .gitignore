@@ -1,0 +1,10 @@
+**/__pycache__
+.idea
+user-data/
+/dataset-data/*
+/model-data/*.pickle
+/model-data/*.tflite
+/model-data/*.pb
+/odel-data/trained_*
+**/*.log
+dev-script-*.py
