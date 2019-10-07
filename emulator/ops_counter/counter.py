@@ -1,3 +1,7 @@
+from typing import Any
+from typing import Dict
+from typing import List
+
 from emulator.ops_counter.layer_configuration_containers import *
 import numpy as np
 
@@ -120,3 +124,34 @@ class MicroNetCounter(object):
                    '{:10.3f}')
         self._print_line(
             'total', '', '', '', '', total_params, total_mults, total_adds, base_str=out_str)
+
+    def get_statistics(self) -> List[Dict[str, Any]]:
+        """Collect info for all operations with given options."""
+
+        ops_statistics = []
+
+        # Let's count starting from zero.
+        total_params, total_mults, total_adds = [0] * 3
+        for op_name, op_template in self.all_ops:
+            param_count, flop_mults, flop_adds = count_tflite_like_ops(op_template)
+
+            temp_res = get_info(op_template)
+            input_size, kernel_size, in_channels, out_channels = temp_res
+            # At this point param_count, flop_mults, flop_adds should be read.
+            total_params += param_count
+            total_mults += flop_mults
+            total_adds += flop_adds
+
+            ops_statistics.append({
+                'op_name': op_name,
+                'inp_size': input_size,
+                'kernel_size': kernel_size,
+                'in_chs': in_channels,
+                'out_chs': out_channels,
+                'params': param_count,
+                'muls': flop_mults,
+                'adds': flop_adds,
+                'flops': flop_mults + flop_adds,
+            })
+
+        return ops_statistics

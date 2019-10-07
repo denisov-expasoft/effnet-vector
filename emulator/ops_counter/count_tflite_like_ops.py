@@ -65,14 +65,14 @@ def _count_matrix_ops_quantized(op: MatrixOps) -> Tuple[float, float, float]:
     # Count parameters
     # (zero point for quantized inputs is taken into account by the previous layer)
 
-    # kernel size + one parameter for storing the weights zero point
-    number_of_parameters = (np.prod(op.kernel_shape) + 1) * op.weight_bits / _FULL_OPERATION_BITS
+    # kernel size + `c_out` parameters for storing the weights zero point (vector)
+    number_of_parameters = (np.prod(op.kernel_shape) + op.output_chs_num) * op.weight_bits / _FULL_OPERATION_BITS
     # zero point for quantized outputs
     number_of_parameters += op.output_bits / _FULL_OPERATION_BITS
     # Bias (assuming there are always a 32-bit bias)
     number_of_parameters += op.kernel_shape[-1]
-    # 32-bit requantization fixed-poin scale
-    number_of_parameters += 1
+    # 32-bit requantization fixed-point scale (unique for each output channel)
+    number_of_parameters += 1 * op.output_chs_num
 
     # Count requantization costs
 
@@ -95,11 +95,18 @@ def _count_matrix_ops_quantized(op: MatrixOps) -> Tuple[float, float, float]:
     # z_w * sum(q_a_i) is also unique for spatial coordinates only
     number_of_muls += op.output_size ** 2 * max(op.weight_bits, block_sum_acc_bits) / _FULL_OPERATION_BITS
 
-    # Take into accoun the activation function
+    # Take the activation function into account
     if op.activation is not None:
-        if op.activation != 'relu':
+        if op.activation == 'relu':
+            number_of_muls += out_vals_num
+        elif op.activation == 'sigmoid':
+            number_of_muls += 2 * out_vals_num
+            number_of_adds += 1 * out_vals_num
+        elif op.activation == 'swish':
+            number_of_muls += 3 * out_vals_num
+            number_of_adds += 1 * out_vals_num
+        else:
             raise ValueError(f'Unsupported activation function "{op.activation}"')
-        number_of_muls += out_vals_num
 
     return number_of_parameters, number_of_muls, number_of_adds
 
@@ -130,6 +137,20 @@ def _count_matrix_ops_float(op: MatrixOps) -> Tuple[float, float, float]:
     if op.use_bias:
         number_of_adds += out_vals_num
         number_of_parameters += op.output_chs_num
+
+    # Take the activation function into account
+    if op.activation is not None:
+        if op.activation == 'relu':
+            number_of_muls += out_vals_num
+        elif op.activation == 'sigmoid':
+            number_of_muls += 2 * out_vals_num
+            number_of_adds += 1 * out_vals_num
+        elif op.activation == 'swish':
+            number_of_muls += 3 * out_vals_num
+            number_of_adds += 1 * out_vals_num
+        else:
+            raise ValueError(f'Unsupported activation function "{op.activation}"')
+
 
     return number_of_parameters, number_of_muls, number_of_adds
 

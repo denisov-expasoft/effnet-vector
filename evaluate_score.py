@@ -1,26 +1,18 @@
 import json
-import pickle
 from copy import deepcopy
 from pathlib import Path
 
 import numpy as np
 
-import emulator
 from emulator.common import GraphWalker
-from emulator.common import SupportedLayerTypes as Slt
 from emulator.common import LayerConfigurationParameters as Lcp
+from emulator.common import SupportedLayerTypes as Slt
+from emulator.ops_counter import layer_configuration_containers as cfg_container
 from emulator.ops_counter.counter import MicroNetCounter
 from emulator.ops_counter.ops_from_config import get_countable_ops
 from emulator.ops_counter.ops_from_config import layer_to_op_info
-from emulator.ops_counter import layer_configuration_containers as cfg_container
 
-_QUANT_CONFIG_PATH = Path('model-data/fakequant.json')
-_REGULAR_CONFIG_PATH = Path('model-data/regular.json')
-
-_QUANT_CONFIG_PATH = Path('model-data/conf.quant.json')
-_REGULAR_CONFIG_PATH = Path('model-data/conf.regular.json')
-
-_INPUT_IMG_SIZE = 256
+_INPUT_IMG_SIZE = 224
 
 
 def _add_input_shape(config, input_shape):
@@ -89,11 +81,10 @@ def _add_input_shape(config, input_shape):
 
 
 def main():
-    with _QUANT_CONFIG_PATH.open('r') as file:
+
+    # with Path('model-data/regular.json').open('r') as file:
+    with Path('model-data/fakequant.json').open('r') as file:
         config = json.load(file)
-    #
-    # with _REGULAR_CONFIG_PATH.open('r') as file:
-    #     config = json.load(file)
 
     _add_input_shape(config, input_shape=[None, _INPUT_IMG_SIZE, _INPUT_IMG_SIZE, 3])
 
@@ -103,6 +94,11 @@ def main():
     total_params, total_muls, total_adds = counter_.process_counts(*counter_.total())
     final_score = total_params / 6.9 + (total_adds + total_muls) / 1170
     print(f'Score is {total_params:.2f} / 6.9 + {(total_adds + total_muls):.1f} / 1170 = {final_score:.4f}')
+
+    # import pickle
+    #
+    # with Path('./model-data/ops-statistics.pickle').open('wb') as file:
+    #     pickle.dump(counter_.get_statistics(), file)
 
 
 if __name__ == '__main__':
