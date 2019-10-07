@@ -2,6 +2,7 @@ __all__ = [
     'InputNode',
     'OutputNode',
     'Conv2D',
+    'MulOperation',
     'DepthwiseConv2D',
     'ReduceMean',
     'FullyConnected',
@@ -152,6 +153,13 @@ class AddOperation(BackendProxyGraphLayer):
 
     def __init__(self):
         super().__init__(backend_node_operation=tf.add, fixed_number_of_inputs=2)
+
+
+@LAYERS_REGISTRY.add_item_decorator(Slt.LAYER_MUL)
+class MulOperation(BackendProxyGraphLayer):
+
+    def __init__(self):
+        super().__init__(backend_node_operation=tf.multiply, fixed_number_of_inputs=2)
 
 
 class ReluActivationLayer(BackendProxyGraphLayer):
