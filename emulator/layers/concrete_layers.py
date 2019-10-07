@@ -7,6 +7,8 @@ __all__ = [
     'ReduceMean',
     'FullyConnected',
     'ReluActivationLayer',
+    'SigmoidActivationLayer',
+    'SwishActivationLayer',
     'LAYERS_REGISTRY',
 ]
 
@@ -167,5 +169,23 @@ class ReluActivationLayer(BackendProxyGraphLayer):
     def __init__(self):
         super().__init__(
             backend_node_operation=tf.nn.relu,
+            fixed_number_of_inputs=1,
+        )
+
+
+class SigmoidActivationLayer(BackendProxyGraphLayer):
+
+    def __init__(self):
+        super().__init__(
+            backend_node_operation=tf.nn.sigmoid,
+            fixed_number_of_inputs=1,
+        )
+
+
+class SwishActivationLayer(BackendProxyGraphLayer):
+
+    def __init__(self):
+        super().__init__(
+            backend_node_operation=tf.nn.swish,
             fixed_number_of_inputs=1,
         )
