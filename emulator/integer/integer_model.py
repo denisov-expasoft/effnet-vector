@@ -50,8 +50,5 @@ class TFLiteGpuInterpreter(RegularModel):
 
 def _get_cfg_with_new_input_shape(cfg, new_input_shape):
     cfg = load_cfg(cfg)
-    for ln, ld in cfg.items():
-        if ln == 'input_node_1':
-            ld['shape'] = list(new_input_shape)
-            break
+    cfg['input_node_1']['shape'] = list(new_input_shape)
     return cfg

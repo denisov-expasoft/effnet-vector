@@ -25,8 +25,6 @@ from emulator.fakequant.quantize_utils import create_adjusted_thresholds
 from emulator.fakequant.quantize_utils import create_adjusted_weights
 from emulator.fakequant.quantize_utils import nudge_parameters_tf
 
-_SUPPORTED_ACTIVATIONS = (None, 'relu')
-
 FAKEQUANT_ADJUSTABLE_THRESHOLDS_METALAYERS = Registry(key_type=Slt)
 FAKEQUANT_ADJUSTABLE_WEIGHTS_METALAYERS = Registry(key_type=Slt)
 

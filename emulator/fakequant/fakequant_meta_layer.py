@@ -33,8 +33,10 @@ from emulator.layers import BaseGraphLayer
 from emulator.layers import BaseMetaLayer
 from emulator.layers import LAYERS_REGISTRY
 from emulator.layers import ReluActivationLayer
+from emulator.layers import SwishActivationLayer
+from emulator.layers import SigmoidActivationLayer
 
-_SUPPORTED_ACTIVATIONS = (None, 'relu')
+_SUPPORTED_ACTIVATIONS = (None, 'relu', 'swish', 'sigmoid')
 
 FAKEQUANT_METALAYERS_REGISTRY = Registry(key_type=Slt)
 
@@ -151,6 +153,7 @@ class FQMetaLayerEnvelope(BaseMetaLayer):
 @FAKEQUANT_METALAYERS_REGISTRY.add_item_decorator([
     Slt.LAYER_INPUT,
     Slt.LAYER_ADD,
+    Slt.LAYER_MUL,
 ])
 class FQRequantizationMetaLayer(FQMetaLayerEnvelope):
 
@@ -250,15 +253,24 @@ class FQMetaLayerWithActivation(FQRequantizationMetaLayer):
         super().__init__(**layer_cfg)
 
     def _process_output_layer(self, output_layer: BaseGraphLayer) -> BaseGraphLayer:
-        if not self._outputs_quantized:
+        if self._activation_function is not None:
             if self._activation_function == 'relu':
                 activation_layer_instance = ReluActivationLayer()
-                return activation_layer_instance(output_layer)
+                output_layer = activation_layer_instance(output_layer)
+            elif self._activation_function == 'swish':
+                activation_layer_instance = SwishActivationLayer()
+                output_layer = activation_layer_instance(output_layer)
+            elif self._activation_function == 'sigmoid':
+                activation_layer_instance = SigmoidActivationLayer()
+                output_layer = activation_layer_instance(output_layer)
+            else:
+                raise NotImplementedError(f'Behaviour of "{self._activation_function}" is not implemented')
 
-            return output_layer
+        if self._outputs_quantized:
+            with tf.name_scope('quantize_output'):
+                output_layer = self._quantize_outputs(output_layer)
 
-        with tf.name_scope('quantize_output'):
-            return self._quantize_outputs(output_layer)
+        return output_layer
 
 
 @FAKEQUANT_METALAYERS_REGISTRY.add_item_decorator([
