@@ -25,7 +25,7 @@ from emulator.layers import BaseGraphLayer
 
 INTEGER_LAYERS_REGISTRY = Registry(key_type=Slt)
 _TFixedPointScale = Tuple[np.ndarray, np.ndarray]
-_SUPPORTED_ACTIVATIONS = (None, 'relu')
+_SUPPORTED_ACTIVATIONS = (None, 'relu', 'swish', 'sigmoid')
 
 
 class ScalarQuantizationParameters(NamedTuple):
@@ -65,7 +65,6 @@ class IntegerLayer(BaseGraphLayer):
 
     @property
     def raw_output(self) -> tf.Tensor:
-        print('Trying to get the raw output')
         if self._raw_output is not None:
             return self._raw_output
         return super().raw_output
@@ -83,7 +82,6 @@ class InputNode(IntegerLayer):
         self._shape = shape
         self._dtype = dtype
         self._output_quant_data = deepcopy(output_quant_data)
-        print(self._output_quant_data.quant_scale)
         super().__init__(fixed_number_of_inputs=0)
 
     def _create_backend_operations(self) -> tf.Tensor:
@@ -131,8 +129,10 @@ class IntegerLayerWithWeights(IntegerLayer):
         self._weights_quant_data = deepcopy(weights_quant_data)
         self._output_quant_data = deepcopy(output_quant_data)
 
+        self._weights_quant_zero_point = self._fix_weights_zero_point()
         self._weights_quantized = self._quantize_weights()
         self._bias_quantized = self._quantize_bias()
+
 
         if activation not in _SUPPORTED_ACTIVATIONS:
             raise TypeError(
@@ -158,6 +158,9 @@ class IntegerLayerWithWeights(IntegerLayer):
         x = _np_round_half_away(x)
         return x
 
+    def _fix_weights_zero_point(self):
+        return self._weights_quant_data.quant_zero
+
     @abstractmethod
     def _create_main_node(self, input_node: tf.Tensor, weights_node: tf.Tensor) -> tf.Tensor:
         pass
@@ -166,7 +169,7 @@ class IntegerLayerWithWeights(IntegerLayer):
         with tf.name_scope('weights'):
             weights_node = self.maybe_save_const(self._weights_quantized, dtype=tf.uint8, name='weights')
             weights_node = tf.cast(weights_node, tf.float64)
-            weights_node = tf.subtract(weights_node, self._weights_quant_data.quant_zero, name='fixed_zero')
+            weights_node = tf.subtract(weights_node, self._weights_quant_zero_point, name='fixed_zero')
 
         bias_node = self.maybe_save_const(self._bias_quantized, dtype=tf.float64, name='bias')
 
@@ -182,20 +185,46 @@ class IntegerLayerWithWeights(IntegerLayer):
             # TODO: implement requantization using fixed-point arithmetic
 
             op_output_scale = self._input_quant_data.quant_scale * self._weights_quant_data.quant_scale
-            rescale_factor = self._output_quant_data.quant_scale / op_output_scale
 
-            scale, shift = create_fixedpoint_scale(rescale_factor, 24)
-            fp_using_float = scale * 2. ** shift
-            fp_using_float = tf.constant(fp_using_float, tf.float64)
+            if self._activation in [None, 'relu']:
+                # Standard pipeline with requantization and applying activation function
+                rescale_factor = self._output_quant_data.quant_scale / op_output_scale
+                scale, shift = create_fixedpoint_scale(rescale_factor, 24)
+                fp_using_float = scale * 2. ** shift
+                fp_using_float = tf.constant(fp_using_float, tf.float64)
 
-            x = tf.multiply(x, fp_using_float)
-            x = _tf_round_half_away(x)
+                x = tf.multiply(x, fp_using_float)
+                x = _tf_round_half_away(x)
+                x = tf.cast(x, tf.float32)
 
-            x = tf.cast(x, tf.float32)
+                if self._activation == 'relu':
+                    with tf.name_scope('activate'):
+                        x = tf.nn.relu(x)
 
-        if self._activation is not None:
-            with tf.name_scope('activate'):
-                x = tf.nn.relu(x)
+            elif self._activation in ['swish', 'sigmoid']:
+                dequantize_factor = 1. / op_output_scale
+
+                with tf.name_scope('dequantize'):
+                    x = tf.multiply(x, dequantize_factor)
+                    x = tf.cast(x, tf.float32)
+
+                with tf.name_scope('activate'):
+                    if self._activation == 'sigmoid':
+                        x = tf.nn.sigmoid(x)
+                    else:
+                        x = tf.nn.swish(x)
+
+                with tf.name_scope('clip'):
+                    x = tf.maximum(x, self._output_quant_data.min_value)
+                    x = tf.minimum(x, self._output_quant_data.max_value)
+
+                with tf.name_scope('quantize'):
+                    x = tf.subtract(x, self._output_quant_data.min_value)
+                    x = tf.multiply(x, self._output_quant_data.quant_scale)
+                    x = _tf_round_half_up(x)
+
+            else:
+                raise NotImplementedError(f'Behaviour of "{self._activation}" is not implemented')
 
         with tf.name_scope('to_uint8'):
             output_zero = self.maybe_save_const(
@@ -249,6 +278,9 @@ class DepthwiseConv2D(Conv2D):
             strides=self._strides,
             padding=self._padding,
         )
+
+    def _fix_weights_zero_point(self):
+        return np.expand_dims(self._weights_quant_data.quant_zero, -1)
 
     def _quantize_weights(self) -> np.ndarray:
         x = np.clip(self._weights, self._weights_quant_data.min_value, self._weights_quant_data.max_value)
