@@ -31,6 +31,7 @@ def _check_input_data(number: np.ndarray) -> None:
 def _find_integer_part_bits_number(number: np.ndarray) -> np.ndarray:
     # Calculate the number of bits, which can contain
     # the minimal integer number larger than the specified one
+    number = np.asarray(number)
     number = number.astype(int)
 
     if np.all(number == 0):
