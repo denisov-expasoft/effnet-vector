@@ -67,64 +67,114 @@ def get_layer_param(layer_name, graph_map):
     return layer_param
 
 
+def create_graphdef_from_ckpt(ckpt_dir):
+    graph = tf.Graph()
+    with tf.Session(graph=graph) as sess:
+        new_saver = tf.train.import_meta_graph(ckpt_dir + 'model.ckpt.meta')
+        new_saver.restore(sess, tf.train.latest_checkpoint(ckpt_dir))
+
+        graph_def = tf.graph_util.convert_variables_to_constants(
+            sess,
+            sess.graph_def,
+            ['logits'],
+        )
+
+    node_to_delete = []
+    for i, node in enumerate(graph_def.node):
+        if node.name in ('truediv', 'sub', 'IteratorGetNext', 'OneShotIterator'):
+            node_to_delete.append(i)
+    node_to_delete.sort(reverse=True)
+    for i in node_to_delete:
+        del graph_def.node[i]
+    graph = tf.Graph()
+    with graph.as_default():
+        _ = tf.placeholder(dtype=tf.float32, shape=[None, 224, 224, 3], name='truediv')
+        placeholder_node_def = graph.as_graph_def().node[0]
+
+    graph_def.node.extend([placeholder_node_def])
+
+    return graph_def
+
+
 def get_batch_norm_param(layer_name, graph_map):
     # gamma
     bn_param = dict()
     node_def = graph_map.get_node_by_name(layer_name)
-    identity_node_def = graph_map.get_node_by_name(node_def.input[1])
+    mul_node_def_gamma = graph_map.get_node_by_name(node_def.input[1])
+    if mul_node_def_gamma.op != 'Mul':
+        _raise_node_not_found()
+
+    identity_node_def = graph_map.get_node_by_name(mul_node_def_gamma.input[1])
     if identity_node_def.op != 'Identity':
         _raise_node_not_found()
 
     const_node_def = graph_map.get_node_by_name(identity_node_def.input[0])
-    if const_node_def.op != 'Const':
+    if const_node_def.op != "Const":
         _raise_node_not_found()
 
     bn_param['gamma'] = tf.make_ndarray(const_node_def.attr['value'].tensor)
 
     # beta
     node_def = graph_map.get_node_by_name(layer_name)
-    identity_node_def = graph_map.get_node_by_name(node_def.input[2])
+    add_node_def = graph_map.get_node_consumers_nodedef(node_def.name)[0]
+    if add_node_def.op != 'AddV2':
+        _raise_node_not_found()
+
+    sub_node_def = graph_map.get_node_by_name(add_node_def.input[1])
+    if sub_node_def.op != "Sub":
+        _raise_node_not_found()
+
+    identity_node_def = graph_map.get_node_by_name(sub_node_def.input[0])
     if identity_node_def.op != 'Identity':
         _raise_node_not_found()
 
     const_node_def = graph_map.get_node_by_name(identity_node_def.input[0])
-    if const_node_def.op != 'Const':
+    if const_node_def.op != "Const":
         _raise_node_not_found()
 
     bn_param['beta'] = tf.make_ndarray(const_node_def.attr['value'].tensor)
 
     # moving_mean
-    node_def = graph_map.get_node_by_name(layer_name)
-    identity_node_def = graph_map.get_node_by_name(node_def.input[3])
+    mul_node_def_mean = graph_map.get_node_by_name(sub_node_def.input[1])
+
+    if mul_node_def_mean.op != 'Mul':
+        _raise_node_not_found()
+
+    identity_node_def = graph_map.get_node_by_name(mul_node_def_mean.input[0])
     if identity_node_def.op != 'Identity':
         _raise_node_not_found()
 
     const_node_def = graph_map.get_node_by_name(identity_node_def.input[0])
-    if const_node_def.op != 'Const':
+    if const_node_def.op != "Const":
         _raise_node_not_found()
 
     bn_param['moving_mean'] = tf.make_ndarray(const_node_def.attr['value'].tensor)
 
     # moving_variance
-    node_def = graph_map.get_node_by_name(layer_name)
-    identity_node_def = graph_map.get_node_by_name(node_def.input[4])
+    rsqrt_node_def = graph_map.get_node_by_name(mul_node_def_gamma.input[0])
+    if rsqrt_node_def.op != 'Rsqrt':
+        _raise_node_not_found()
+
+    add_node_def = graph_map.get_node_by_name(rsqrt_node_def.input[0])
+    if add_node_def.op != 'AddV2':
+        _raise_node_not_found()
+
+    identity_node_def = graph_map.get_node_by_name(add_node_def.input[0])
     if identity_node_def.op != 'Identity':
         _raise_node_not_found()
 
     const_node_def = graph_map.get_node_by_name(identity_node_def.input[0])
-    if const_node_def.op != 'Const':
+    if const_node_def.op != "Const":
         _raise_node_not_found()
 
     bn_param['moving_variance'] = tf.make_ndarray(const_node_def.attr['value'].tensor)
+
     return bn_param
 
 
-def _extract_weights(model_pb_path):
+def _extract_weights(ckpt_dir_path):
 
-    graph_def = tf.GraphDef()
-    with tf.gfile.GFile(model_pb_path, 'rb') as file:
-        file_data = file.read()
-        graph_def.ParseFromString(file_data)
+    graph_def = create_graphdef_from_ckpt(ckpt_dir_path)
 
     graph_map = GraphMap(graph_def)
 
@@ -132,7 +182,9 @@ def _extract_weights(model_pb_path):
         layer_to_node = json.load(file)
 
     layer_data = dict()
-    _EPSILON = graph_map.get_node_by_name('mnasnet_1/lead_cell_12/op_0/bn2_0/FusedBatchNorm').attr['epsilon'].f
+    _EPSILON = graph_map.get_node_by_name(
+        'efficientnet-b0/model/blocks_4/tpu_batch_normalization_2/batchnorm/add/y'
+    ).attr['epsilon'].f
     for layer_name in layer_to_node:
         if layer_to_node[layer_name][0] is None:
             continue
@@ -170,10 +222,10 @@ def _save_data(data, file_path):
 
 
 @click.command()
-@click.option('--pb-path', help='The original model', required=True, type=str)
-def main(pb_path):
+@click.option('--ckpt-dir-path', help='The original model', required=True, type=str)
+def main(ckpt_dir_path):
     # Step one: extract weights
-    weights = _extract_weights(pb_path)
+    weights = _extract_weights(ckpt_dir_path)
     _save_data(weights, 'model-data/weights_original.pickle')
 
 
