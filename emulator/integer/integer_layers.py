@@ -28,7 +28,7 @@ _TFixedPointScale = Tuple[np.ndarray, np.ndarray]
 _SUPPORTED_ACTIVATIONS = (None, 'relu', 'swish', 'sigmoid')
 
 _FLOAT64 = tf.float64
-_FP_BITS = 24
+_FP_BITS = 32
 
 class ScalarQuantizationParameters(NamedTuple):
     min_value: float
@@ -173,7 +173,8 @@ class IntegerLayerWithWeights(IntegerLayer):
             weights_node = tf.cast(weights_node, _FLOAT64)
             weights_node = tf.subtract(weights_node, self._weights_quant_zero_point, name='fixed_zero')
 
-        bias_node = self.maybe_save_const(self._bias_quantized, dtype=_FLOAT64, name='bias')
+        bias_node = self.maybe_save_const(self._bias_quantized, dtype=tf.int32, name='quantized_bias')
+        bias_node = tf.cast(bias_node, _FLOAT64, name='bias')
 
         with tf.name_scope('shift_zero'):
             input_node = self._get_backend_inputs()[0]
@@ -192,6 +193,7 @@ class IntegerLayerWithWeights(IntegerLayer):
                 scale, shift = create_fixedpoint_scale(rescale_factor, _FP_BITS)
                 fp_using_float = scale * 2. ** shift
                 fp_using_float = tf.constant(fp_using_float, _FLOAT64)
+                # assert False  # TODO: remove
 
                 x = tf.multiply(x, fp_using_float)
                 x = tf.cast(x, tf.float32)
@@ -200,6 +202,15 @@ class IntegerLayerWithWeights(IntegerLayer):
             if self._activation == 'relu':
                 with tf.name_scope('activate'):
                     x = tf.nn.relu(x)
+
+            with tf.name_scope('to_uint8'):
+                output_zero = self.maybe_save_const(
+                    np.array(self._output_quant_data.quant_zero),
+                    dtype=tf.uint8,
+                    name='output_zero',
+                )
+                output_zero = tf.cast(output_zero, tf.float32)
+                x = tf.add(x, output_zero)
 
         elif self._activation in ['swish', 'sigmoid']:
             dequantize_factor = 1. / op_output_scale
@@ -225,15 +236,6 @@ class IntegerLayerWithWeights(IntegerLayer):
 
         else:
             raise NotImplementedError(f'Behaviour of "{self._activation}" is not implemented')
-
-        with tf.name_scope('to_uint8'):
-            output_zero = self.maybe_save_const(
-                np.array(self._output_quant_data.quant_zero),
-                dtype=tf.uint8,
-                name='output_zero',
-            )
-            output_zero = tf.cast(output_zero, tf.float32)
-            x = tf.add(x, output_zero)
 
         return x
 
@@ -290,25 +292,68 @@ class DepthwiseConv2D(Conv2D):
         return x
 
 
-# @INTEGER_LAYERS_REGISTRY.add_item_decorator(Slt.LAYER_REDUCE_MEAN)
-# class ReduceMean(BackendProxyGraphLayer):
-#
-#     def __init__(self, axis, keepdims):
-#         self._axis = axis
-#         self._keepdims = keepdims
-#         super().__init__(
-#             backend_node_operation=tf.reduce_mean,
-#             fixed_number_of_inputs=1,
-#             axis=axis,
-#             keepdims=keepdims,
-#         )
+@INTEGER_LAYERS_REGISTRY.add_item_decorator(Slt.LAYER_REDUCE_MEAN)
+class ReduceMean(IntegerLayer):
+
+    def __init__(self, axis, keepdims):
+        self._axis = axis
+        self._keepdims = keepdims
+        super().__init__(fixed_number_of_inputs=1)
+
+    def _create_backend_operations(self) -> tf.Tensor:
+
+        input_node = self._get_backend_inputs()[0]
+
+        input_node_shape = input_node.shape.as_list()
+        spatial_dims = [input_node_shape[i] for i in self._axis]
+        w_area = int(np.prod(spatial_dims))
+
+        x = input_node
+        x = tf.cast(x, _FLOAT64)
+
+        x = tf.reduce_sum(x, axis=self._axis, keepdims=self._keepdims)
+        x = tf.math.floordiv(x, w_area)
+
+        return x
 
 
-# @INTEGER_LAYERS_REGISTRY.add_item_decorator(Slt.LAYER_ADD)
-# class AddOperation(BackendProxyGraphLayer):
-#
-#     def __init__(self):
-#         super().__init__(backend_node_operation=tf.add, fixed_number_of_inputs=2)
+@INTEGER_LAYERS_REGISTRY.add_item_decorator(Slt.LAYER_ADD)
+class AddOperation(IntegerLayer):
+
+    def __init__(
+            self,
+            input_1_quant_data: ScalarQuantizationParameters,
+            input_2_quant_data: ScalarQuantizationParameters,
+            output_quant_data: VectorQauntizationParameters,
+    ):
+        self._input_1_quant_data = input_1_quant_data
+        self._input_2_quant_data = input_2_quant_data
+        self._output_quant_data = output_quant_data
+        super().__init__(fixed_number_of_inputs=2)
+
+    def _create_backend_operations(self) -> tf.Tensor:
+        input_node_1, input_node_2 = self._get_backend_inputs()
+
+        with tf.name_scope('dequantize_1'):
+            input_node_1 = tf.subtract(input_node_1, self._input_1_quant_data.quant_zero)
+            input_node_1 = tf.multiply(input_node_1, 1. / self._input_1_quant_data.quant_scale)
+
+        with tf.name_scope('dequantize_2'):
+            input_node_2 = tf.subtract(input_node_2, self._input_2_quant_data.quant_zero)
+            input_node_2 = tf.multiply(input_node_2, 1. / self._input_2_quant_data.quant_scale)
+
+        x = tf.add(input_node_1, input_node_2)
+
+        with tf.name_scope('clip'):
+            x = tf.maximum(x, self._output_quant_data.min_value)
+            x = tf.minimum(x, self._output_quant_data.max_value)
+
+        with tf.name_scope('quantize'):
+            x = tf.subtract(x, self._output_quant_data.min_value)
+            x = tf.multiply(x, self._output_quant_data.quant_scale)
+            x = _tf_round_half_up(x)
+
+        return x
 
 
 @INTEGER_LAYERS_REGISTRY.add_item_decorator(Slt.LAYER_MUL)
