@@ -67,8 +67,11 @@ def bits_to_quant_range(bits: int, narrow_range: bool) -> Tuple[float, float]:
             'Bits capacity must be greater than 1 and less than or equal to 32'
         )
 
-    qmax = 2. ** bits - 1.
-    qmin = 1. if narrow_range else 0.
+    # qmax = 2. ** bits - 1.
+    # qmin = 1. if narrow_range else 0.
+
+    qmax = 2. ** bits - 2. if narrow_range else 2. ** bits - 1
+    qmin = 0
 
     return qmin, qmax
 

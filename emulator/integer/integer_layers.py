@@ -213,6 +213,7 @@ class IntegerLayerWithWeights(IntegerLayer):
                 x = tf.add(x, output_zero)
 
         elif self._activation in ['swish', 'sigmoid']:
+        # if self._activation in ['swish', 'sigmoid', None, 'relu']:
             dequantize_factor = 1. / op_output_scale
 
             with tf.name_scope('dequantize'):
@@ -222,8 +223,10 @@ class IntegerLayerWithWeights(IntegerLayer):
             with tf.name_scope('activate'):
                 if self._activation == 'sigmoid':
                     x = tf.nn.sigmoid(x)
-                else:
+                elif self._activation == 'swish':
                     x = tf.nn.swish(x)
+                # elif self._activation == 'relu':
+                #     x = tf.nn.relu(x)
 
             with tf.name_scope('clip'):
                 x = tf.maximum(x, self._output_quant_data.min_value)
@@ -295,9 +298,10 @@ class DepthwiseConv2D(Conv2D):
 @INTEGER_LAYERS_REGISTRY.add_item_decorator(Slt.LAYER_REDUCE_MEAN)
 class ReduceMean(IntegerLayer):
 
-    def __init__(self, axis, keepdims):
+    def __init__(self, axis, keepdims, output_quant_data: ScalarQuantizationParameters = None):
         self._axis = axis
         self._keepdims = keepdims
+        self._output_quant_data = output_quant_data
         super().__init__(fixed_number_of_inputs=1)
 
     def _create_backend_operations(self) -> tf.Tensor:
@@ -384,26 +388,38 @@ class MulOperation(IntegerLayer):
 
         op_output_scale = self._input_1_quant_data.quant_scale * self._input_2_quant_data.quant_scale
 
-        with tf.name_scope('fixed_point_rescale'):
-            # Standard pipeline with requantization and applying activation function
-            rescale_factor = self._output_quant_data.quant_scale / op_output_scale
-            scale, shift = create_fixedpoint_scale(rescale_factor, _FP_BITS)
-            fp_using_float = scale * 2. ** shift
-            fp_using_float = tf.constant(fp_using_float, _FLOAT64)
+        with tf.name_scope('dequantize'):
+            x = tf.multiply(x, 1. / op_output_scale)
 
-            x = tf.cast(x, _FLOAT64)
-            x = tf.multiply(x, fp_using_float)
-            x = tf.cast(x, tf.float32)
-            x = _tf_round_half_away(x)
+        with tf.name_scope('clip'):
+            x = tf.maximum(x, self._output_quant_data.min_value)
+            x = tf.minimum(x, self._output_quant_data.max_value)
 
-        with tf.name_scope('to_uint8'):
-            output_zero = self.maybe_save_const(
-                np.array(self._output_quant_data.quant_zero),
-                dtype=tf.uint8,
-                name='output_zero',
-            )
-            output_zero = tf.cast(output_zero, tf.float32)
-            x = tf.add(x, output_zero)
+        with tf.name_scope('quantize'):
+            x = tf.subtract(x, self._output_quant_data.min_value)
+            x = tf.multiply(x, self._output_quant_data.quant_scale)
+            x = _tf_round_half_up(x)
+
+        # with tf.name_scope('fixed_point_rescale'):
+        #     # Standard pipeline with requantization and applying activation function
+        #     rescale_factor = self._output_quant_data.quant_scale / op_output_scale
+        #     scale, shift = create_fixedpoint_scale(rescale_factor, _FP_BITS)
+        #     fp_using_float = scale * 2. ** shift
+        #     fp_using_float = tf.constant(fp_using_float, _FLOAT64)
+        #
+        #     x = tf.cast(x, _FLOAT64)
+        #     x = tf.multiply(x, fp_using_float)
+        #     x = tf.cast(x, tf.float32)
+        #     x = _tf_round_half_away(x)
+        #
+        # with tf.name_scope('to_uint8'):
+        #     output_zero = self.maybe_save_const(
+        #         np.array(self._output_quant_data.quant_zero),
+        #         dtype=tf.uint8,
+        #         name='output_zero',
+        #     )
+        #     output_zero = tf.cast(output_zero, tf.float32)
+        #     x = tf.add(x, output_zero)
 
         return x
 
