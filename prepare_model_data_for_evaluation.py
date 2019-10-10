@@ -48,7 +48,7 @@ def _get_scalar_quantization_data(
     return ScalarQuantizationParameters(n_min.item(), n_max.item(), n_scale.item(), int(n_zero.item()))
 
 
-def get_cfg_weights_and_quant_data(
+def get_all_quantization_data(
         reg_cfg_path: _TPath,
         quant_cfg_path: _TPath,
         weights_path: _TPath,
@@ -131,5 +131,23 @@ def get_cfg_weights_and_quant_data(
                     False,
                 ),
             }
+
+    return reg_cfg, quant_cfg, a_ths, w_ths, weights, quantization_data
+
+
+def get_cfg_weights_and_quant_data(
+        reg_cfg_path: _TPath,
+        quant_cfg_path: _TPath,
+        weights_path: _TPath,
+        thresholds_path: _TPath,
+        img_size: int,
+):
+    reg_cfg, _, _, _, weights, quantization_data = get_all_quantization_data(
+        reg_cfg_path,
+        quant_cfg_path,
+        weights_path,
+        thresholds_path,
+        img_size
+    )
 
     return reg_cfg, weights, quantization_data
