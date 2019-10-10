@@ -44,8 +44,8 @@ def _get_scalar_quantization_data(
         bits: int,
         narrow_range: bool,
 ) -> ScalarQuantizationParameters:
-    n_min, n_max, n_scale, n_zero = nudge_parameters_np_ex(min_max_th[0], min_max_th[1], bits,narrow_range)
-    return ScalarQuantizationParameters(n_min.item(), n_max.item(), n_scale.item(), int(n_zero.item()))
+    n_min, n_max, n_scale, n_zero = nudge_parameters_np_ex(min_max_th[0], min_max_th[1], bits, narrow_range)
+    return ScalarQuantizationParameters(n_min.item(), n_max.item(), n_scale.item(), int(n_zero.item()), bits)
 
 
 def get_all_quantization_data(
