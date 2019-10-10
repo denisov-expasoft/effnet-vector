@@ -2,24 +2,47 @@
 
 from pathlib import Path
 
+import click
+
 import emulator
 from emulator.dataset import batch_stream_from_records
-from emulator.dataset import imagenet_evaluate_tflite
+from emulator.dataset import efficientnet_preprocess_function
+from emulator.dataset import imagenet_evaluate
+from prepare_model_data_for_evaluation import get_cfg_weights_and_quant_data
+
+_IMG_SIZE = 224
 
 
-def main():
+@click.command()
+@click.option('--img-size', help='The original model', default=_IMG_SIZE, type=int)
+def main(img_size):
 
-    # Evaluation
-    tflite_batch_stream = batch_stream_from_records(
+    cfg, weights, quantization_data = get_cfg_weights_and_quant_data(
+        'model-data/regular.json',
+        'model-data/fakequant.json',
+        'model-data/ready_to_use_weights.pickle',
+        'model-data/ready_to_use_thresholds_vector.pickle',
+        img_size,
+    )
+
+    # Build integer model
+    integer_model = emulator.TFLiteGpuInterpreter(
+        cfg,
+        weights,
+        quantization_data=quantization_data,
+    )
+
+    validation_bach_stream = batch_stream_from_records(
         Path('dataset-data/val_set'),
-        batch_size=1,
-        output_image_size=256,
-        preprocess_fun=lambda image: image,  # image already has values from 0 to 255
-        crop_fraction=1,
+        batch_size=100,
+        output_image_size=_IMG_SIZE,
+        preprocess_fun=efficientnet_preprocess_function,
+        crop_fraction=1.
     )
 
     emulator.turn_logging_on()
-    imagenet_evaluate_tflite('model-data/ready_to_use_model.tflite', tflite_batch_stream, log_every_n_batches=100)
+
+    imagenet_evaluate(integer_model, validation_bach_stream, log_every_n_batches=50)
 
 
 if __name__ == '__main__':
