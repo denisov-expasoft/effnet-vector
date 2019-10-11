@@ -32,13 +32,15 @@
 # Reproducing the Results
 
  1. Download this repo
- 2. Download original [EfficientNet-B0 model](https://storage.googleapis.com/cloud-tpu-checkpoints/efficientnet/ckptsaug/efficientnet-b0.tar.gz) (37.5 MB)
+ 2. Download original [EfficientNet-B0 model](https://storage.googleapis.com/cloud-tpu-checkpoints/efficientnet/ckptsaug/efficientnet-b0.tar.gz) (39 MB)
  3. Download the [ImageNet validation dataset packed into a TF-Records file](https://yadi.sk/d/UVI9JniKaspHEg) (6 GB)
  4. Put the TF-Record file or a symlink to the `dataset-data` directory (the script expects to see a file `dataset-data/val_set`).
  5. Download the [ImageNet train subset](https://drive.google.com/drive/folders/1xEH1DejM2e7sj1cn69H5S6rIASiVdtZO?usp=sharing) (12 GB)
  6. Put the two TF-Record files or symlinks to them to the `dataset-data` directory 
     (the script expects to see two files `dataset-data/train_set0000` and `dataset-data/train_set0001`).
- 7. Run the script `extract_weights_from_the_original_model.py` with 
-    specifying the path to the original pb-file  `--pb-path`
- 8. Run the script `quantize_model.py` (With GeForce 1080 Ti the process takes about 40 minutes).
- 9. Run the script `evaluate_model.py` (2-3 hours)
+ 7. Download a [model quantization data](https://yadi.sk/d/0ri9Qk1GJdNomA) with trained weights (300 kB)
+ 8. Put file **'initial_thresholds_vector.pickle''** into `model-data` directory
+ 9. Run the script `extract_weights_from_the_original_model.py` with 
+    specifying the path to the model checkpoint  `--ckpt-dir-path`
+ 10. Run the script `quantize_model.py` (With GeForce 1080 Ti the process takes about 40 minutes).
+ 11. Run the script `evaluate_model.py` (2-3 hours)

@@ -32,8 +32,15 @@ _WEIGHTS_PATH = Path('model-data/weights.pickle')
 def _load_thresholds(path: Union[str, Path]) -> Tuple[ThresholdsMappedData, ThresholdsMappedData]:
     path = Path(path)
     with path.open('rb') as file:
-        data = pickle.load(file)
-    return data
+        aths , wths = pickle.load(file)
+
+    if not isinstance(aths, ThresholdsMappedData):
+        aths = ThresholdsMappedData(aths)
+
+    if not isinstance(wths, ThresholdsMappedData):
+        wths = ThresholdsMappedData(wths)
+
+    return aths, wths
 
 
 def _save_data(data, file_path):

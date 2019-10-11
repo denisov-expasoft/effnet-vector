@@ -226,7 +226,7 @@ def _save_data(data, file_path):
 def main(ckpt_dir_path):
     # Step one: extract weights
     weights = _extract_weights(ckpt_dir_path)
-    _save_data(weights, 'model-data/weights_original.pickle')
+    _save_data(weights, 'model-data/weights.pickle')
 
 
 if __name__ == '__main__':

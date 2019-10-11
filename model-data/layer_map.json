@@ -1,0 +1,334 @@
+{
+    "input_node_1": [null],
+    "conv2d_layer_1": ["efficientnet-b0/model/stem/conv2d/Conv2D", "efficientnet-b0/model/stem/tpu_batch_normalization/batchnorm/mul_1"],
+    "swish_layer_1": [null],
+    "conv2d_depthwise_layer_1": [
+        "efficientnet-b0/model/blocks_0/depthwise_conv2d/depthwise",
+        "efficientnet-b0/model/blocks_0/tpu_batch_normalization/batchnorm/mul_1"
+    ],
+    "swish_layer_2": [null],
+    "reduce_mean_layer_1": [null],
+    "conv2d_layer_2": ["efficientnet-b0/model/blocks_0/se/conv2d/Conv2D"],
+    "swish_layer_3": [null],
+    "conv2d_layer_3": ["efficientnet-b0/model/blocks_0/se/conv2d_1/Conv2D"],
+    "sigmoid_layer_1": [null],
+    "mul_layer_1": [null],
+    "conv2d_layer_4": [
+        "efficientnet-b0/model/blocks_0/conv2d/Conv2D",
+        "efficientnet-b0/model/blocks_0/tpu_batch_normalization_1/batchnorm/mul_1"
+    ],
+    "conv2d_layer_5": [
+        "efficientnet-b0/model/blocks_1/conv2d/Conv2D",
+        "efficientnet-b0/model/blocks_1/tpu_batch_normalization/batchnorm/mul_1"
+    ],
+    "swish_layer_4": [null],
+    "conv2d_depthwise_layer_2": [
+        "efficientnet-b0/model/blocks_1/depthwise_conv2d/depthwise",
+        "efficientnet-b0/model/blocks_1/tpu_batch_normalization_1/batchnorm/mul_1"
+    ],
+    "swish_layer_5": [null],
+    "reduce_mean_layer_2": [null],
+    "conv2d_layer_6": ["efficientnet-b0/model/blocks_1/se/conv2d/Conv2D"],
+    "swish_layer_6": [null],
+    "conv2d_layer_7": ["efficientnet-b0/model/blocks_1/se/conv2d_1/Conv2D"],
+    "sigmoid_layer_2": [null],
+    "mul_layer_2": [null],
+    "conv2d_layer_8": [
+        "efficientnet-b0/model/blocks_1/conv2d_1/Conv2D",
+        "efficientnet-b0/model/blocks_1/tpu_batch_normalization_2/batchnorm/mul_1"
+    ],
+    "conv2d_layer_9": [
+        "efficientnet-b0/model/blocks_2/conv2d/Conv2D",
+        "efficientnet-b0/model/blocks_2/tpu_batch_normalization/batchnorm/mul_1"
+    ],
+    "swish_layer_7": [null],
+    "conv2d_depthwise_layer_3": [
+        "efficientnet-b0/model/blocks_2/depthwise_conv2d/depthwise",
+        "efficientnet-b0/model/blocks_2/tpu_batch_normalization_1/batchnorm/mul_1"
+    ],
+    "swish_layer_8": [null],
+    "reduce_mean_layer_3": [null],
+    "conv2d_layer_10": ["efficientnet-b0/model/blocks_2/se/conv2d/Conv2D"],
+    "swish_layer_9": [null],
+    "conv2d_layer_11": ["efficientnet-b0/model/blocks_2/se/conv2d_1/Conv2D"],
+    "sigmoid_layer_3": [null],
+    "mul_layer_3": [null],
+    "conv2d_layer_12": [
+        "efficientnet-b0/model/blocks_2/conv2d_1/Conv2D",
+        "efficientnet-b0/model/blocks_2/tpu_batch_normalization_2/batchnorm/mul_1"
+    ],
+    "add_layer_1": [null],
+    "conv2d_layer_13": [
+        "efficientnet-b0/model/blocks_3/conv2d/Conv2D",
+        "efficientnet-b0/model/blocks_3/tpu_batch_normalization/batchnorm/mul_1"
+    ],
+    "swish_layer_10": [null],
+    "conv2d_depthwise_layer_4": [
+        "efficientnet-b0/model/blocks_3/depthwise_conv2d/depthwise",
+        "efficientnet-b0/model/blocks_3/tpu_batch_normalization_1/batchnorm/mul_1"
+    ],
+    "swish_layer_11": [null],
+    "reduce_mean_layer_4": [null],
+    "conv2d_layer_14": ["efficientnet-b0/model/blocks_3/se/conv2d/Conv2D"],
+    "swish_layer_12": [null],
+    "conv2d_layer_15": ["efficientnet-b0/model/blocks_3/se/conv2d_1/Conv2D"],
+    "sigmoid_layer_4": [null],
+    "mul_layer_4": [null],
+    "conv2d_layer_16": [
+        "efficientnet-b0/model/blocks_3/conv2d_1/Conv2D",
+        "efficientnet-b0/model/blocks_3/tpu_batch_normalization_2/batchnorm/mul_1"
+    ],
+    "conv2d_layer_17": [
+        "efficientnet-b0/model/blocks_4/conv2d/Conv2D",
+        "efficientnet-b0/model/blocks_4/tpu_batch_normalization/batchnorm/mul_1"
+    ],
+    "swish_layer_13": [null],
+    "conv2d_depthwise_layer_5": [
+        "efficientnet-b0/model/blocks_4/depthwise_conv2d/depthwise",
+        "efficientnet-b0/model/blocks_4/tpu_batch_normalization_1/batchnorm/mul_1"
+    ],
+    "swish_layer_14": [null],
+    "reduce_mean_layer_5": [null],
+    "conv2d_layer_18": ["efficientnet-b0/model/blocks_4/se/conv2d/Conv2D"],
+    "swish_layer_15": [null],
+    "conv2d_layer_19": ["efficientnet-b0/model/blocks_4/se/conv2d_1/Conv2D"],
+    "sigmoid_layer_5": [null],
+    "mul_layer_5": [null],
+    "conv2d_layer_20": [
+        "efficientnet-b0/model/blocks_4/conv2d_1/Conv2D",
+        "efficientnet-b0/model/blocks_4/tpu_batch_normalization_2/batchnorm/mul_1"
+    ],
+    "add_layer_2": [null],
+    "conv2d_layer_21": [
+        "efficientnet-b0/model/blocks_5/conv2d/Conv2D",
+        "efficientnet-b0/model/blocks_5/tpu_batch_normalization/batchnorm/mul_1"
+    ],
+    "swish_layer_16": [null],
+    "conv2d_depthwise_layer_6": [
+        "efficientnet-b0/model/blocks_5/depthwise_conv2d/depthwise",
+        "efficientnet-b0/model/blocks_5/tpu_batch_normalization_1/batchnorm/mul_1"
+    ],
+    "swish_layer_17": [null],
+    "reduce_mean_layer_6": [null],
+    "conv2d_layer_22": ["efficientnet-b0/model/blocks_5/se/conv2d/Conv2D"],
+    "swish_layer_18": [null],
+    "conv2d_layer_23": ["efficientnet-b0/model/blocks_5/se/conv2d_1/Conv2D"],
+    "sigmoid_layer_6": [null],
+    "mul_layer_6": [null],
+    "conv2d_layer_24": [
+        "efficientnet-b0/model/blocks_5/conv2d_1/Conv2D",
+        "efficientnet-b0/model/blocks_5/tpu_batch_normalization_2/batchnorm/mul_1"
+    ],
+    "conv2d_layer_25": [
+        "efficientnet-b0/model/blocks_6/conv2d/Conv2D",
+        "efficientnet-b0/model/blocks_6/tpu_batch_normalization/batchnorm/mul_1"
+    ],
+    "swish_layer_19": [null],
+    "conv2d_depthwise_layer_7": [
+        "efficientnet-b0/model/blocks_6/depthwise_conv2d/depthwise",
+        "efficientnet-b0/model/blocks_6/tpu_batch_normalization_1/batchnorm/mul_1"
+    ],
+    "swish_layer_20": [null],
+    "reduce_mean_layer_7": [null],
+    "conv2d_layer_26": ["efficientnet-b0/model/blocks_6/se/conv2d/Conv2D"],
+    "swish_layer_21": [null],
+    "conv2d_layer_27": ["efficientnet-b0/model/blocks_6/se/conv2d_1/Conv2D"],
+    "sigmoid_layer_7": [null],
+    "mul_layer_7": [null],
+    "conv2d_layer_28": [
+        "efficientnet-b0/model/blocks_6/conv2d_1/Conv2D",
+        "efficientnet-b0/model/blocks_6/tpu_batch_normalization_2/batchnorm/mul_1"
+    ],
+    "add_layer_3": [null],
+    "conv2d_layer_29": [
+        "efficientnet-b0/model/blocks_7/conv2d/Conv2D",
+        "efficientnet-b0/model/blocks_7/tpu_batch_normalization/batchnorm/mul_1"
+    ],
+    "swish_layer_22": [null],
+    "conv2d_depthwise_layer_8": [
+        "efficientnet-b0/model/blocks_7/depthwise_conv2d/depthwise",
+        "efficientnet-b0/model/blocks_7/tpu_batch_normalization_1/batchnorm/mul_1"
+    ],
+    "swish_layer_23": [null],
+    "reduce_mean_layer_8": [null],
+    "conv2d_layer_30": ["efficientnet-b0/model/blocks_7/se/conv2d/Conv2D"],
+    "swish_layer_24": [null],
+    "conv2d_layer_31": ["efficientnet-b0/model/blocks_7/se/conv2d_1/Conv2D"],
+    "sigmoid_layer_8": [null],
+    "mul_layer_8": [null],
+    "conv2d_layer_32": [
+        "efficientnet-b0/model/blocks_7/conv2d_1/Conv2D",
+        "efficientnet-b0/model/blocks_7/tpu_batch_normalization_2/batchnorm/mul_1"
+    ],
+    "add_layer_4": [null],
+    "conv2d_layer_33": [
+        "efficientnet-b0/model/blocks_8/conv2d/Conv2D",
+        "efficientnet-b0/model/blocks_8/tpu_batch_normalization/batchnorm/mul_1"
+    ],
+    "swish_layer_25": [null],
+    "conv2d_depthwise_layer_9": [
+        "efficientnet-b0/model/blocks_8/depthwise_conv2d/depthwise",
+        "efficientnet-b0/model/blocks_8/tpu_batch_normalization_1/batchnorm/mul_1"
+    ],
+    "swish_layer_26": [null],
+    "reduce_mean_layer_9": [null],
+    "conv2d_layer_34": ["efficientnet-b0/model/blocks_8/se/conv2d/Conv2D"],
+    "swish_layer_27": [null],
+    "conv2d_layer_35": ["efficientnet-b0/model/blocks_8/se/conv2d_1/Conv2D"],
+    "sigmoid_layer_9": [null],
+    "mul_layer_9": [null],
+    "conv2d_layer_36": [
+        "efficientnet-b0/model/blocks_8/conv2d_1/Conv2D",
+        "efficientnet-b0/model/blocks_8/tpu_batch_normalization_2/batchnorm/mul_1"
+    ],
+    "conv2d_layer_37": [
+        "efficientnet-b0/model/blocks_9/conv2d/Conv2D",
+        "efficientnet-b0/model/blocks_9/tpu_batch_normalization/batchnorm/mul_1"
+    ],
+    "swish_layer_28": [null],
+    "conv2d_depthwise_layer_10": [
+        "efficientnet-b0/model/blocks_9/depthwise_conv2d/depthwise",
+        "efficientnet-b0/model/blocks_9/tpu_batch_normalization_1/batchnorm/mul_1"
+    ],
+    "swish_layer_29": [null],
+    "reduce_mean_layer_10": [null],
+    "conv2d_layer_38": ["efficientnet-b0/model/blocks_9/se/conv2d/Conv2D"],
+    "swish_layer_30": [null],
+    "conv2d_layer_39": ["efficientnet-b0/model/blocks_9/se/conv2d_1/Conv2D"],
+    "sigmoid_layer_10": [null],
+    "mul_layer_10": [null],
+    "conv2d_layer_40": [
+        "efficientnet-b0/model/blocks_9/conv2d_1/Conv2D",
+        "efficientnet-b0/model/blocks_9/tpu_batch_normalization_2/batchnorm/mul_1"
+    ],
+    "add_layer_5": [null],
+    "conv2d_layer_41": [
+        "efficientnet-b0/model/blocks_10/conv2d/Conv2D",
+        "efficientnet-b0/model/blocks_10/tpu_batch_normalization/batchnorm/mul_1"
+    ],
+    "swish_layer_31": [null],
+    "conv2d_depthwise_layer_11": [
+        "efficientnet-b0/model/blocks_10/depthwise_conv2d/depthwise",
+        "efficientnet-b0/model/blocks_10/tpu_batch_normalization_1/batchnorm/mul_1"
+    ],
+    "swish_layer_32": [null],
+    "reduce_mean_layer_11": [null],
+    "conv2d_layer_42": ["efficientnet-b0/model/blocks_10/se/conv2d/Conv2D"],
+    "swish_layer_33": [null],
+    "conv2d_layer_43": ["efficientnet-b0/model/blocks_10/se/conv2d_1/Conv2D"],
+    "sigmoid_layer_11": [null],
+    "mul_layer_11": [null],
+    "conv2d_layer_44": [
+        "efficientnet-b0/model/blocks_10/conv2d_1/Conv2D",
+        "efficientnet-b0/model/blocks_10/tpu_batch_normalization_2/batchnorm/mul_1"
+    ],
+    "add_layer_6": [null],
+    "conv2d_layer_45": [
+        "efficientnet-b0/model/blocks_11/conv2d/Conv2D",
+        "efficientnet-b0/model/blocks_11/tpu_batch_normalization/batchnorm/mul_1"
+    ],
+    "swish_layer_34": [null],
+    "conv2d_depthwise_layer_12": [
+        "efficientnet-b0/model/blocks_11/depthwise_conv2d/depthwise",
+        "efficientnet-b0/model/blocks_11/tpu_batch_normalization_1/batchnorm/mul_1"
+    ],
+    "swish_layer_35": [null],
+    "reduce_mean_layer_12": [null],
+    "conv2d_layer_46": ["efficientnet-b0/model/blocks_11/se/conv2d/Conv2D"],
+    "swish_layer_36": [null],
+    "conv2d_layer_47": ["efficientnet-b0/model/blocks_11/se/conv2d_1/Conv2D"],
+    "sigmoid_layer_12": [null],
+    "mul_layer_12": [null],
+    "conv2d_layer_48": [
+        "efficientnet-b0/model/blocks_11/conv2d_1/Conv2D",
+        "efficientnet-b0/model/blocks_11/tpu_batch_normalization_2/batchnorm/mul_1"
+    ],
+    "conv2d_layer_49": [
+        "efficientnet-b0/model/blocks_12/conv2d/Conv2D",
+        "efficientnet-b0/model/blocks_12/tpu_batch_normalization/batchnorm/mul_1"
+    ],
+    "swish_layer_37": [null],
+    "conv2d_depthwise_layer_13": [
+        "efficientnet-b0/model/blocks_12/depthwise_conv2d/depthwise",
+        "efficientnet-b0/model/blocks_12/tpu_batch_normalization_1/batchnorm/mul_1"
+    ],
+    "swish_layer_38": [null],
+    "reduce_mean_layer_13": [null],
+    "conv2d_layer_50": ["efficientnet-b0/model/blocks_12/se/conv2d/Conv2D"],
+    "swish_layer_39": [null],
+    "conv2d_layer_51": ["efficientnet-b0/model/blocks_12/se/conv2d_1/Conv2D"],
+    "sigmoid_layer_13": [null],
+    "mul_layer_13": [null],
+    "conv2d_layer_52": [
+        "efficientnet-b0/model/blocks_12/conv2d_1/Conv2D",
+        "efficientnet-b0/model/blocks_12/tpu_batch_normalization_2/batchnorm/mul_1"
+    ],
+    "add_layer_7": [null],
+    "conv2d_layer_53": [
+        "efficientnet-b0/model/blocks_13/conv2d/Conv2D",
+        "efficientnet-b0/model/blocks_13/tpu_batch_normalization/batchnorm/mul_1"
+    ],
+    "swish_layer_40": [null],
+    "conv2d_depthwise_layer_14": [
+        "efficientnet-b0/model/blocks_13/depthwise_conv2d/depthwise",
+        "efficientnet-b0/model/blocks_13/tpu_batch_normalization_1/batchnorm/mul_1"
+    ],
+    "swish_layer_41": [null],
+    "reduce_mean_layer_14": [null],
+    "conv2d_layer_54": ["efficientnet-b0/model/blocks_13/se/conv2d/Conv2D"],
+    "swish_layer_42": [null],
+    "conv2d_layer_55": ["efficientnet-b0/model/blocks_13/se/conv2d_1/Conv2D"],
+    "sigmoid_layer_14": [null],
+    "mul_layer_14": [null],
+    "conv2d_layer_56": [
+        "efficientnet-b0/model/blocks_13/conv2d_1/Conv2D",
+        "efficientnet-b0/model/blocks_13/tpu_batch_normalization_2/batchnorm/mul_1"
+    ],
+    "add_layer_8": [null],
+    "conv2d_layer_57": [
+        "efficientnet-b0/model/blocks_14/conv2d/Conv2D",
+        "efficientnet-b0/model/blocks_14/tpu_batch_normalization/batchnorm/mul_1"
+    ],
+    "swish_layer_43": [null],
+    "conv2d_depthwise_layer_15": [
+        "efficientnet-b0/model/blocks_14/depthwise_conv2d/depthwise",
+        "efficientnet-b0/model/blocks_14/tpu_batch_normalization_1/batchnorm/mul_1"
+    ],
+    "swish_layer_44": [null],
+    "reduce_mean_layer_15": [null],
+    "conv2d_layer_58": ["efficientnet-b0/model/blocks_14/se/conv2d/Conv2D"],
+    "swish_layer_45": [null],
+    "conv2d_layer_59": ["efficientnet-b0/model/blocks_14/se/conv2d_1/Conv2D"],
+    "sigmoid_layer_15": [null],
+    "mul_layer_15": [null],
+    "conv2d_layer_60": [
+        "efficientnet-b0/model/blocks_14/conv2d_1/Conv2D",
+        "efficientnet-b0/model/blocks_14/tpu_batch_normalization_2/batchnorm/mul_1"
+    ],
+    "add_layer_9": [null],
+    "conv2d_layer_61": [
+        "efficientnet-b0/model/blocks_15/conv2d/Conv2D",
+        "efficientnet-b0/model/blocks_15/tpu_batch_normalization/batchnorm/mul_1"
+    ],
+    "swish_layer_46": [null],
+    "conv2d_depthwise_layer_16": [
+        "efficientnet-b0/model/blocks_15/depthwise_conv2d/depthwise",
+        "efficientnet-b0/model/blocks_15/tpu_batch_normalization_1/batchnorm/mul_1"
+    ],
+    "swish_layer_47": [null],
+    "reduce_mean_layer_16": [null],
+    "conv2d_layer_62": ["efficientnet-b0/model/blocks_15/se/conv2d/Conv2D"],
+    "swish_layer_48": [null],
+    "conv2d_layer_63": ["efficientnet-b0/model/blocks_15/se/conv2d_1/Conv2D"],
+    "sigmoid_layer_16": [null],
+    "mul_layer_16": [null],
+    "conv2d_layer_64": [
+        "efficientnet-b0/model/blocks_15/conv2d_1/Conv2D",
+        "efficientnet-b0/model/blocks_15/tpu_batch_normalization_2/batchnorm/mul_1"
+    ],
+    "conv2d_layer_65": ["efficientnet-b0/model/head/conv2d/Conv2D", "efficientnet-b0/model/head/tpu_batch_normalization/batchnorm/mul_1"],
+    "swish_layer_49": [null],
+    "reduce_mean_layer_17": [null],
+    "fully_connected_layer_1": ["efficientnet-b0/model/head/dense/MatMul"],
+    "output_node_1": [null]
+}
