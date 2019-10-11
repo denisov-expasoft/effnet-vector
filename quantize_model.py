@@ -24,7 +24,7 @@ _NUMBER_OF_EPOCH_FOR_THRESHOLDS = 2
 _MODEL_DIR = Path('model-data')
 _TRAIN_BATCH_SIZE = 32
 _IMAGE_OUTPUT_SIZE = 224
-_QUANT_CONFIG_PATH = Path('model-data/fakequant_vector.json')
+_QUANT_CONFIG_PATH = Path('model-data/fakequant.json')
 _REGULAR_CONFIG_PATH = Path('model-data/regular.json')
 _WEIGHTS_PATH = Path('model-data/weights.pickle')
 
