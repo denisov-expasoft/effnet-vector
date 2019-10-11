@@ -11,6 +11,7 @@ from emulator.common.data_types import TWeightsCfg
 from emulator.common.data_utils import load_weights
 from emulator.dataset import batch_stream_from_records
 from emulator.fakequant.calibrators import ThresholdsMappedData
+from emulator.dataset import efficientnet_preprocess_function
 
 _LOGGER = logging.getLogger('emulator.quantization')
 
@@ -58,6 +59,15 @@ def _train_thresholds(
     emulator.turn_logging_on()
     _LOGGER.info('Prepare the model for quantization thresholds training ...')
 
+    learning_strategy = emulator.fakequant.LearningStrategy(
+        optimizer_type='adam',
+        initial_lr=3e-4,
+        lr_decay=8e-5,
+        lr_cos_steps=500,
+        lr_cos_phase=3.141592654 * 0.4,
+        metric_type='rmse',
+    )
+
     emulator.turn_logging_off()
     thresholds_trainable_model = emulator.AdjustableThresholdsModel(
         cfg_or_cfg_path=quant_config_path,
@@ -74,6 +84,7 @@ def _train_thresholds(
         batch_size=_TRAIN_BATCH_SIZE,
         output_image_size=_IMAGE_OUTPUT_SIZE,
         crop_fraction=_CROP_FRACTION,
+        preprocess_fun=efficientnet_preprocess_function,
     )
     emulator.turn_logging_on()
 
@@ -83,6 +94,7 @@ def _train_thresholds(
         batch_stream=thresholds_train_batch_stream,
         tensorboard_log_dir=_MODEL_DIR / 'trained_thresholds',
         number_of_epochs=_NUMBER_OF_EPOCH_FOR_THRESHOLDS,
+        learning_strategy=learning_strategy,
     )
 
     _LOGGER.info('Checkpoint where the loss-function had its absolute minimum:')
@@ -103,6 +115,15 @@ def _train_weights(
     emulator.turn_logging_on()
     _LOGGER.info('Prepare the model for quantization-aware weights training ...')
 
+    learning_strategy=emulator.fakequant.LearningStrategy(
+        optimizer_type='adam',
+        initial_lr=1e-4,
+        lr_decay=5e-5,
+        lr_cos_steps=1000,
+        lr_cos_phase=3.141592654 / 3,
+        metric_type='rmse',
+    )
+
     emulator.turn_logging_off()
     weights_trainable_model = emulator.AdjustableWeightsModel(
         cfg_or_cfg_path=quant_config_path,
@@ -119,6 +140,7 @@ def _train_weights(
         batch_size=_TRAIN_BATCH_SIZE,
         output_image_size=_IMAGE_OUTPUT_SIZE,
         crop_fraction=_CROP_FRACTION,
+        preprocess_fun=efficientnet_preprocess_function,
     )
     emulator.turn_logging_on()
     best_ckpt_path = emulator.fakequant.train_adjustable_model(
@@ -127,8 +149,8 @@ def _train_weights(
         batch_stream=weights_train_batch_stream,
         tensorboard_log_dir=_MODEL_DIR / 'trained_weights',
         number_of_epochs=1,
+        learning_strategy=learning_strategy,
     )
-    emulator.turn_logging_off()
 
     _LOGGER.info('Checkpoint where the loss-function had its absolute minimum:')
     _LOGGER.info(best_ckpt_path)
@@ -136,26 +158,6 @@ def _train_weights(
     emulator.turn_logging_off()
 
     return weights_trainable_model.get_network_weights()
-
-
-def _eval_model(cfg, weights, a_ths_data, w_ths_data):
-    emulator.turn_logging_off()
-    validation_batch_stream = batch_stream_from_records(
-        records_paths=Path('dataset-data/val_set'),
-        batch_size=100,
-        output_image_size=_IMAGE_OUTPUT_SIZE,
-        crop_fraction=_CROP_FRACTION,
-    )
-
-    quant_model = emulator.FakeQuantModel(
-        cfg,
-        weights,
-        a_ths_data,
-        w_ths_data,
-    )
-    emulator.turn_logging_on()
-    emulator.dataset.imagenet_evaluate(quant_model, validation_batch_stream, log_every_n_batches=50)
-    emulator.turn_logging_off()
 
 
 def main():

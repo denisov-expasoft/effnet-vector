@@ -138,7 +138,7 @@ class AdjThsMatrixOpsMetaLayer(AdjThsMetaLayerWithActivation, FQMatrixOpsMetaLay
     Slt.LAYER_ADD,
     Slt.LAYER_MUL,
 ])
-class AdjWeightsRequantizationMetaLayer(AdjThsRequantizationMetaLayer):
+class AdjWeightsRequantizationMetaLayer(FQRequantizationMetaLayer):
     pass
 
 
