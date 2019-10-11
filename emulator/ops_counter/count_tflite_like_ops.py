@@ -1,5 +1,4 @@
 from typing import Tuple
-from typing import Union
 
 import numpy as np
 
@@ -11,8 +10,6 @@ from emulator.ops_counter.layer_configuration_containers import FullyConnected
 from emulator.ops_counter.layer_configuration_containers import GlobalAvg
 from emulator.ops_counter.layer_configuration_containers import MatrixOps
 from emulator.ops_counter.layer_configuration_containers import Mul
-from emulator.ops_counter.layer_configuration_containers import Sigmoid
-from emulator.ops_counter.layer_configuration_containers import Swish
 
 # If we use strict accumulator we have to fix number of bits for every accumulator
 _ACCUMULATOR_BITS = 32
@@ -97,16 +94,22 @@ def _count_matrix_ops_quantized(op: MatrixOps) -> Tuple[float, float, float]:
 
     # Take the activation function into account
     if op.activation is not None:
-        if op.activation == 'relu':
-            number_of_muls += out_vals_num
-        elif op.activation == 'sigmoid':
+        if op.activation == 'sigmoid':
             number_of_muls += 2 * out_vals_num
             number_of_adds += 1 * out_vals_num
+            number_of_muls += 1 * out_vals_num  # sigmoid is calculated using float -> one operation for quantization
+            # ops for dequantization is taken into account by scoring the requantization operations above
+
         elif op.activation == 'swish':
             number_of_muls += 3 * out_vals_num
             number_of_adds += 1 * out_vals_num
+            number_of_muls += 1 * out_vals_num  # swish is calculated using float -> one operation for quantization
+            # ops for dequantization is taken into account by scoring the requantization operations above
+
         else:
             raise ValueError(f'Unsupported activation function "{op.activation}"')
+
+    number_of_muls += out_vals_num * 2  # two operations for clipping the output value
 
     return number_of_parameters, number_of_muls, number_of_adds
 
@@ -140,9 +143,7 @@ def _count_matrix_ops_float(op: MatrixOps) -> Tuple[float, float, float]:
 
     # Take the activation function into account
     if op.activation is not None:
-        if op.activation == 'relu':
-            number_of_muls += out_vals_num
-        elif op.activation == 'sigmoid':
+        if op.activation == 'sigmoid':
             number_of_muls += 2 * out_vals_num
             number_of_adds += 1 * out_vals_num
         elif op.activation == 'swish':
@@ -150,7 +151,6 @@ def _count_matrix_ops_float(op: MatrixOps) -> Tuple[float, float, float]:
             number_of_adds += 1 * out_vals_num
         else:
             raise ValueError(f'Unsupported activation function "{op.activation}"')
-
 
     return number_of_parameters, number_of_muls, number_of_adds
 
@@ -166,6 +166,7 @@ def _count_add_ops(op: Add) -> Tuple[float, float, float]:
 
         # requantization of two input tensors, and requantization of the output
         number_of_muls = out_val_num * 3
+        number_of_muls += out_val_num * 2  # clipping the output values
 
         # Addition is performed using 32-bit values
         number_of_adds = out_val_num
@@ -199,25 +200,6 @@ def _count_avg_ops(op: GlobalAvg) -> Tuple[float, float, float]:
     return number_of_parameters, number_of_muls, number_of_adds
 
 
-def _count_sigmoid_based_ops(op: Union[Sigmoid, Swish]) -> Tuple[float, float, float]:
-    out_val_num = int(np.prod(op.input_shape))
-
-    if isinstance(op, Swish):
-        number_of_muls = 3 * out_val_num
-    else:
-        number_of_muls = 2 * out_val_num
-
-    number_of_adds = 1 * out_val_num
-
-    if op.quantized:
-        number_of_parameters = 1  # 32-bit requantization factor for the output
-        number_of_muls += 1 * out_val_num  # output requantization using 32-bit fixed-point scale
-    else:
-        number_of_parameters = 0
-
-    return number_of_parameters, number_of_muls, number_of_adds
-
-
 def _count_mul_layer_ops(op: Mul) -> Tuple[float, float, float]:
     out_val_num = int(np.prod(op.input_shape))
 
@@ -234,6 +216,9 @@ def _count_mul_layer_ops(op: Mul) -> Tuple[float, float, float]:
     else:
         number_of_parameters = 1
         rescale_cost = 1
+
+    if op.output_quantized:
+        rescale_cost += 2  # costs for clipping the output values
 
     if op.input_bits[0] < 16:
         add_1_cost = op.input_bits[0] / _FULL_OPERATION_BITS
@@ -260,7 +245,7 @@ def _count_mul_layer_ops(op: Mul) -> Tuple[float, float, float]:
     number_of_adds = (add_1_cost + add_2_cost + add_out_cost) * out_val_num
     number_of_muls = (
             mul_cost * out_val_num +  # multiplication of inputs
-            rescale_cost * out_val_num  # optional rescaling
+            rescale_cost * out_val_num  # optional rescaling + clipping
     )
 
     return number_of_parameters, number_of_muls, number_of_adds
@@ -278,9 +263,6 @@ def count_tflite_like_ops(op: BaseOperation) -> Tuple[float, float, float]:
 
     if isinstance(op, GlobalAvg):
         return _count_avg_ops(op)
-
-    if isinstance(op, (Sigmoid, Swish)):
-        return _count_sigmoid_based_ops(op)
 
     if isinstance(op, Mul):
         return _count_mul_layer_ops(op)
