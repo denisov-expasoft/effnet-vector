@@ -16,7 +16,7 @@
         "activations_bits": 8,
         "weights_bits": 8,
         "weights_thresholds": "min_max_filterwise",
-        "weights_narrow_range": true
+        "weights_narrow_range": false
     },
     "conv2d_depthwise_layer_1": {
         "type": "conv2d_depthwise_layer",
@@ -46,7 +46,7 @@
         "activations_bits": 8,
         "weights_bits": 8,
         "weights_thresholds": "min_max_filterwise",
-        "weights_narrow_range": true
+        "weights_narrow_range": false
     },
     "conv2d_layer_3": {
         "type": "conv2d_layer",
@@ -58,7 +58,7 @@
         "activations_bits": 8,
         "weights_bits": 8,
         "weights_thresholds": "min_max_filterwise",
-        "weights_narrow_range": true
+        "weights_narrow_range": false
     },
     "mul_layer_1": {
         "type": "mul_layer",
@@ -75,7 +75,7 @@
         "activations_bits": 6,
         "weights_bits": 8,
         "weights_thresholds": "min_max_filterwise",
-        "weights_narrow_range": true
+        "weights_narrow_range": false
     },
     "conv2d_layer_5": {
         "type": "conv2d_layer",
@@ -87,7 +87,7 @@
         "activations_bits": 8,
         "weights_bits": 6,
         "weights_thresholds": "min_max_filterwise",
-        "weights_narrow_range": true
+        "weights_narrow_range": false
     },
     "conv2d_depthwise_layer_2": {
         "type": "conv2d_depthwise_layer",
@@ -117,7 +117,7 @@
         "activations_bits": 8,
         "weights_bits": 8,
         "weights_thresholds": "min_max_filterwise",
-        "weights_narrow_range": true
+        "weights_narrow_range": false
     },
     "conv2d_layer_7": {
         "type": "conv2d_layer",
@@ -129,7 +129,7 @@
         "activations_bits": 8,
         "weights_bits": 8,
         "weights_thresholds": "min_max_filterwise",
-        "weights_narrow_range": true
+        "weights_narrow_range": false
     },
     "mul_layer_2": {
         "type": "mul_layer",
@@ -146,7 +146,7 @@
         "activations_bits": 6,
         "weights_bits": 8,
         "weights_thresholds": "min_max_filterwise",
-        "weights_narrow_range": true
+        "weights_narrow_range": false
     },
     "conv2d_layer_9": {
         "type": "conv2d_layer",
@@ -158,7 +158,7 @@
         "activations_bits": 8,
         "weights_bits": 6,
         "weights_thresholds": "min_max_filterwise",
-        "weights_narrow_range": true
+        "weights_narrow_range": false
     },
     "conv2d_depthwise_layer_3": {
         "type": "conv2d_depthwise_layer",
@@ -188,7 +188,7 @@
         "activations_bits": 8,
         "weights_bits": 8,
         "weights_thresholds": "min_max_filterwise",
-        "weights_narrow_range": true
+        "weights_narrow_range": false
     },
     "conv2d_layer_11": {
         "type": "conv2d_layer",
@@ -200,12 +200,12 @@
         "activations_bits": 8,
         "weights_bits": 8,
         "weights_thresholds": "min_max_filterwise",
-        "weights_narrow_range": true
+        "weights_narrow_range": false
     },
     "mul_layer_3": {
         "type": "mul_layer",
         "bottom": ["conv2d_layer_11", "conv2d_depthwise_layer_3"],
-        "activations_bits": 5
+        "activations_bits": 6
     },
     "conv2d_layer_12": {
         "type": "conv2d_layer",
@@ -215,14 +215,14 @@
         "bottom": ["mul_layer_3"],
         "activation": null,
         "activations_bits": 8,
-        "weights_bits": 5,
+        "weights_bits": 6,
         "weights_thresholds": "min_max_filterwise",
-        "weights_narrow_range": true
+        "weights_narrow_range": false
     },
     "add_layer_1": {
         "type": "add_layer",
         "bottom": ["conv2d_layer_12", "conv2d_layer_8"],
-        "activations_bits": 5
+        "activations_bits": 6
     },
     "conv2d_layer_13": {
         "type": "conv2d_layer",
@@ -232,9 +232,9 @@
         "bottom": ["add_layer_1"],
         "activation": "swish",
         "activations_bits": 8,
-        "weights_bits": 5,
+        "weights_bits": 6,
         "weights_thresholds": "min_max_filterwise",
-        "weights_narrow_range": true
+        "weights_narrow_range": false
     },
     "conv2d_depthwise_layer_4": {
         "type": "conv2d_depthwise_layer",
@@ -264,7 +264,7 @@
         "activations_bits": 8,
         "weights_bits": 8,
         "weights_thresholds": "min_max_filterwise",
-        "weights_narrow_range": true
+        "weights_narrow_range": false
     },
     "conv2d_layer_15": {
         "type": "conv2d_layer",
@@ -276,7 +276,7 @@
         "activations_bits": 8,
         "weights_bits": 8,
         "weights_thresholds": "min_max_filterwise",
-        "weights_narrow_range": true
+        "weights_narrow_range": false
     },
     "mul_layer_4": {
         "type": "mul_layer",
@@ -293,7 +293,7 @@
         "activations_bits": 8,
         "weights_bits": 8,
         "weights_thresholds": "min_max_filterwise",
-        "weights_narrow_range": true
+        "weights_narrow_range": false
     },
     "conv2d_layer_17": {
         "type": "conv2d_layer",
@@ -305,7 +305,7 @@
         "activations_bits": 8,
         "weights_bits": 8,
         "weights_thresholds": "min_max_filterwise",
-        "weights_narrow_range": true
+        "weights_narrow_range": false
     },
     "conv2d_depthwise_layer_5": {
         "type": "conv2d_depthwise_layer",
@@ -335,7 +335,7 @@
         "activations_bits": 8,
         "weights_bits": 8,
         "weights_thresholds": "min_max_filterwise",
-        "weights_narrow_range": true
+        "weights_narrow_range": false
     },
     "conv2d_layer_19": {
         "type": "conv2d_layer",
@@ -347,7 +347,7 @@
         "activations_bits": 8,
         "weights_bits": 8,
         "weights_thresholds": "min_max_filterwise",
-        "weights_narrow_range": true
+        "weights_narrow_range": false
     },
     "mul_layer_5": {
         "type": "mul_layer",
@@ -364,7 +364,7 @@
         "activations_bits": 8,
         "weights_bits": 8,
         "weights_thresholds": "min_max_filterwise",
-        "weights_narrow_range": true
+        "weights_narrow_range": false
     },
     "add_layer_2": {
         "type": "add_layer",
@@ -381,7 +381,7 @@
         "activations_bits": 8,
         "weights_bits": 8,
         "weights_thresholds": "min_max_filterwise",
-        "weights_narrow_range": true
+        "weights_narrow_range": false
     },
     "conv2d_depthwise_layer_6": {
         "type": "conv2d_depthwise_layer",
@@ -411,7 +411,7 @@
         "activations_bits": 8,
         "weights_bits": 8,
         "weights_thresholds": "min_max_filterwise",
-        "weights_narrow_range": true
+        "weights_narrow_range": false
     },
     "conv2d_layer_23": {
         "type": "conv2d_layer",
@@ -423,7 +423,7 @@
         "activations_bits": 8,
         "weights_bits": 8,
         "weights_thresholds": "min_max_filterwise",
-        "weights_narrow_range": true
+        "weights_narrow_range": false
     },
     "mul_layer_6": {
         "type": "mul_layer",
@@ -440,7 +440,7 @@
         "activations_bits": 8,
         "weights_bits": 8,
         "weights_thresholds": "min_max_filterwise",
-        "weights_narrow_range": true
+        "weights_narrow_range": false
     },
     "conv2d_layer_25": {
         "type": "conv2d_layer",
@@ -452,7 +452,7 @@
         "activations_bits": 8,
         "weights_bits": 8,
         "weights_thresholds": "min_max_filterwise",
-        "weights_narrow_range": true
+        "weights_narrow_range": false
     },
     "conv2d_depthwise_layer_7": {
         "type": "conv2d_depthwise_layer",
@@ -482,7 +482,7 @@
         "activations_bits": 8,
         "weights_bits": 8,
         "weights_thresholds": "min_max_filterwise",
-        "weights_narrow_range": true
+        "weights_narrow_range": false
     },
     "conv2d_layer_27": {
         "type": "conv2d_layer",
@@ -494,7 +494,7 @@
         "activations_bits": 8,
         "weights_bits": 8,
         "weights_thresholds": "min_max_filterwise",
-        "weights_narrow_range": true
+        "weights_narrow_range": false
     },
     "mul_layer_7": {
         "type": "mul_layer",
@@ -511,7 +511,7 @@
         "activations_bits": 8,
         "weights_bits": 8,
         "weights_thresholds": "min_max_filterwise",
-        "weights_narrow_range": true
+        "weights_narrow_range": false
     },
     "add_layer_3": {
         "type": "add_layer",
@@ -528,7 +528,7 @@
         "activations_bits": 8,
         "weights_bits": 8,
         "weights_thresholds": "min_max_filterwise",
-        "weights_narrow_range": true
+        "weights_narrow_range": false
     },
     "conv2d_depthwise_layer_8": {
         "type": "conv2d_depthwise_layer",
@@ -558,7 +558,7 @@
         "activations_bits": 8,
         "weights_bits": 8,
         "weights_thresholds": "min_max_filterwise",
-        "weights_narrow_range": true
+        "weights_narrow_range": false
     },
     "conv2d_layer_31": {
         "type": "conv2d_layer",
@@ -570,7 +570,7 @@
         "activations_bits": 8,
         "weights_bits": 8,
         "weights_thresholds": "min_max_filterwise",
-        "weights_narrow_range": true
+        "weights_narrow_range": false
     },
     "mul_layer_8": {
         "type": "mul_layer",
@@ -587,7 +587,7 @@
         "activations_bits": 8,
         "weights_bits": 8,
         "weights_thresholds": "min_max_filterwise",
-        "weights_narrow_range": true
+        "weights_narrow_range": false
     },
     "add_layer_4": {
         "type": "add_layer",
@@ -604,7 +604,7 @@
         "activations_bits": 8,
         "weights_bits": 8,
         "weights_thresholds": "min_max_filterwise",
-        "weights_narrow_range": true
+        "weights_narrow_range": false
     },
     "conv2d_depthwise_layer_9": {
         "type": "conv2d_depthwise_layer",
@@ -634,7 +634,7 @@
         "activations_bits": 8,
         "weights_bits": 8,
         "weights_thresholds": "min_max_filterwise",
-        "weights_narrow_range": true
+        "weights_narrow_range": false
     },
     "conv2d_layer_35": {
         "type": "conv2d_layer",
@@ -646,7 +646,7 @@
         "activations_bits": 8,
         "weights_bits": 8,
         "weights_thresholds": "min_max_filterwise",
-        "weights_narrow_range": true
+        "weights_narrow_range": false
     },
     "mul_layer_9": {
         "type": "mul_layer",
@@ -660,10 +660,10 @@
         "weights_shape": [1, 1, 480, 112],
         "bottom": ["mul_layer_9"],
         "activation": null,
-        "activations_bits": 4,
+        "activations_bits": 5,
         "weights_bits": 8,
         "weights_thresholds": "min_max_filterwise",
-        "weights_narrow_range": true
+        "weights_narrow_range": false
     },
     "conv2d_layer_37": {
         "type": "conv2d_layer",
@@ -673,9 +673,9 @@
         "bottom": ["conv2d_layer_36"],
         "activation": "swish",
         "activations_bits": 8,
-        "weights_bits": 4,
+        "weights_bits": 5,
         "weights_thresholds": "min_max_filterwise",
-        "weights_narrow_range": true
+        "weights_narrow_range": false
     },
     "conv2d_depthwise_layer_10": {
         "type": "conv2d_depthwise_layer",
@@ -705,7 +705,7 @@
         "activations_bits": 8,
         "weights_bits": 8,
         "weights_thresholds": "min_max_filterwise",
-        "weights_narrow_range": true
+        "weights_narrow_range": false
     },
     "conv2d_layer_39": {
         "type": "conv2d_layer",
@@ -717,7 +717,7 @@
         "activations_bits": 8,
         "weights_bits": 8,
         "weights_thresholds": "min_max_filterwise",
-        "weights_narrow_range": true
+        "weights_narrow_range": false
     },
     "mul_layer_10": {
         "type": "mul_layer",
@@ -734,7 +734,7 @@
         "activations_bits": 8,
         "weights_bits": 5,
         "weights_thresholds": "min_max_filterwise",
-        "weights_narrow_range": true
+        "weights_narrow_range": false
     },
     "add_layer_5": {
         "type": "add_layer",
@@ -751,7 +751,7 @@
         "activations_bits": 8,
         "weights_bits": 4,
         "weights_thresholds": "min_max_filterwise",
-        "weights_narrow_range": true
+        "weights_narrow_range": false
     },
     "conv2d_depthwise_layer_11": {
         "type": "conv2d_depthwise_layer",
@@ -781,7 +781,7 @@
         "activations_bits": 8,
         "weights_bits": 8,
         "weights_thresholds": "min_max_filterwise",
-        "weights_narrow_range": true
+        "weights_narrow_range": false
     },
     "conv2d_layer_43": {
         "type": "conv2d_layer",
@@ -793,12 +793,12 @@
         "activations_bits": 8,
         "weights_bits": 8,
         "weights_thresholds": "min_max_filterwise",
-        "weights_narrow_range": true
+        "weights_narrow_range": false
     },
     "mul_layer_11": {
         "type": "mul_layer",
         "bottom": ["conv2d_layer_43", "conv2d_depthwise_layer_11"],
-        "activations_bits": 4
+        "activations_bits": 5
     },
     "conv2d_layer_44": {
         "type": "conv2d_layer",
@@ -808,9 +808,9 @@
         "bottom": ["mul_layer_11"],
         "activation": null,
         "activations_bits": 8,
-        "weights_bits": 4,
+        "weights_bits": 5,
         "weights_thresholds": "min_max_filterwise",
-        "weights_narrow_range": true
+        "weights_narrow_range": false
     },
     "add_layer_6": {
         "type": "add_layer",
@@ -827,7 +827,7 @@
         "activations_bits": 8,
         "weights_bits": 4,
         "weights_thresholds": "min_max_filterwise",
-        "weights_narrow_range": true
+        "weights_narrow_range": false
     },
     "conv2d_depthwise_layer_12": {
         "type": "conv2d_depthwise_layer",
@@ -857,7 +857,7 @@
         "activations_bits": 8,
         "weights_bits": 8,
         "weights_thresholds": "min_max_filterwise",
-        "weights_narrow_range": true
+        "weights_narrow_range": false
     },
     "conv2d_layer_47": {
         "type": "conv2d_layer",
@@ -869,7 +869,7 @@
         "activations_bits": 8,
         "weights_bits": 8,
         "weights_thresholds": "min_max_filterwise",
-        "weights_narrow_range": true
+        "weights_narrow_range": false
     },
     "mul_layer_12": {
         "type": "mul_layer",
@@ -886,7 +886,7 @@
         "activations_bits": 8,
         "weights_bits": 8,
         "weights_thresholds": "min_max_filterwise",
-        "weights_narrow_range": true
+        "weights_narrow_range": false
     },
     "conv2d_layer_49": {
         "type": "conv2d_layer",
@@ -898,7 +898,7 @@
         "activations_bits": 8,
         "weights_bits": 4,
         "weights_thresholds": "min_max_filterwise",
-        "weights_narrow_range": true
+        "weights_narrow_range": false
     },
     "conv2d_depthwise_layer_13": {
         "type": "conv2d_depthwise_layer",
@@ -928,7 +928,7 @@
         "activations_bits": 8,
         "weights_bits": 8,
         "weights_thresholds": "min_max_filterwise",
-        "weights_narrow_range": true
+        "weights_narrow_range": false
     },
     "conv2d_layer_51": {
         "type": "conv2d_layer",
@@ -940,7 +940,7 @@
         "activations_bits": 8,
         "weights_bits": 8,
         "weights_thresholds": "min_max_filterwise",
-        "weights_narrow_range": true
+        "weights_narrow_range": false
     },
     "mul_layer_13": {
         "type": "mul_layer",
@@ -957,7 +957,7 @@
         "activations_bits": 8,
         "weights_bits": 8,
         "weights_thresholds": "min_max_filterwise",
-        "weights_narrow_range": true
+        "weights_narrow_range": false
     },
     "add_layer_7": {
         "type": "add_layer",
@@ -974,7 +974,7 @@
         "activations_bits": 8,
         "weights_bits": 4,
         "weights_thresholds": "min_max_filterwise",
-        "weights_narrow_range": true
+        "weights_narrow_range": false
     },
     "conv2d_depthwise_layer_14": {
         "type": "conv2d_depthwise_layer",
@@ -1004,7 +1004,7 @@
         "activations_bits": 8,
         "weights_bits": 8,
         "weights_thresholds": "min_max_filterwise",
-        "weights_narrow_range": true
+        "weights_narrow_range": false
     },
     "conv2d_layer_55": {
         "type": "conv2d_layer",
@@ -1016,7 +1016,7 @@
         "activations_bits": 8,
         "weights_bits": 8,
         "weights_thresholds": "min_max_filterwise",
-        "weights_narrow_range": true
+        "weights_narrow_range": false
     },
     "mul_layer_14": {
         "type": "mul_layer",
@@ -1033,7 +1033,7 @@
         "activations_bits": 8,
         "weights_bits": 4,
         "weights_thresholds": "min_max_filterwise",
-        "weights_narrow_range": true
+        "weights_narrow_range": false
     },
     "add_layer_8": {
         "type": "add_layer",
@@ -1050,7 +1050,7 @@
         "activations_bits": 8,
         "weights_bits": 4,
         "weights_thresholds": "min_max_filterwise",
-        "weights_narrow_range": true
+        "weights_narrow_range": false
     },
     "conv2d_depthwise_layer_15": {
         "type": "conv2d_depthwise_layer",
@@ -1080,7 +1080,7 @@
         "activations_bits": 8,
         "weights_bits": 8,
         "weights_thresholds": "min_max_filterwise",
-        "weights_narrow_range": true
+        "weights_narrow_range": false
     },
     "conv2d_layer_59": {
         "type": "conv2d_layer",
@@ -1092,7 +1092,7 @@
         "activations_bits": 8,
         "weights_bits": 8,
         "weights_thresholds": "min_max_filterwise",
-        "weights_narrow_range": true
+        "weights_narrow_range": false
     },
     "mul_layer_15": {
         "type": "mul_layer",
@@ -1109,12 +1109,12 @@
         "activations_bits": 8,
         "weights_bits": 4,
         "weights_thresholds": "min_max_filterwise",
-        "weights_narrow_range": true
+        "weights_narrow_range": false
     },
     "add_layer_9": {
         "type": "add_layer",
         "bottom": ["conv2d_layer_60", "add_layer_8"],
-        "activations_bits": 4
+        "activations_bits": 6
     },
     "conv2d_layer_61": {
         "type": "conv2d_layer",
@@ -1124,9 +1124,9 @@
         "bottom": ["add_layer_9"],
         "activation": "swish",
         "activations_bits": 8,
-        "weights_bits": 4,
+        "weights_bits": 6,
         "weights_thresholds": "min_max_filterwise",
-        "weights_narrow_range": true
+        "weights_narrow_range": false
     },
     "conv2d_depthwise_layer_16": {
         "type": "conv2d_depthwise_layer",
@@ -1156,7 +1156,7 @@
         "activations_bits": 8,
         "weights_bits": 8,
         "weights_thresholds": "min_max_filterwise",
-        "weights_narrow_range": true
+        "weights_narrow_range": false
     },
     "conv2d_layer_63": {
         "type": "conv2d_layer",
@@ -1168,7 +1168,7 @@
         "activations_bits": 8,
         "weights_bits": 8,
         "weights_thresholds": "min_max_filterwise",
-        "weights_narrow_range": true
+        "weights_narrow_range": false
     },
     "mul_layer_16": {
         "type": "mul_layer",
@@ -1182,10 +1182,10 @@
         "weights_shape": [1, 1, 1152, 320],
         "bottom": ["mul_layer_16"],
         "activation": null,
-        "activations_bits": 3,
+        "activations_bits": 4,
         "weights_bits": 4,
         "weights_thresholds": "min_max_filterwise",
-        "weights_narrow_range": true
+        "weights_narrow_range": false
     },
     "conv2d_layer_65": {
         "type": "conv2d_layer",
@@ -1195,9 +1195,9 @@
         "bottom": ["conv2d_layer_64"],
         "activation": "swish",
         "activations_bits": 8,
-        "weights_bits": 3,
+        "weights_bits": 4,
         "weights_thresholds": "min_max_filterwise",
-        "weights_narrow_range": true
+        "weights_narrow_range": false
     },
     "reduce_mean_layer_17": {
         "type": "reduce_mean_layer",
@@ -1213,7 +1213,7 @@
         "activations_bits": 8,
         "weights_bits": 3,
         "weights_thresholds": "min_max_filterwise",
-        "weights_narrow_range": true
+        "weights_narrow_range": false
     },
     "output_node_1": {
         "type": "output_node",
