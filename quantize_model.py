@@ -22,11 +22,11 @@ _IMAGENET_VALIDATION_RECORD_PATHS = Path('dataset-data/train_set0000')
 _CROP_FRACTION = 1.0
 _NUMBER_OF_EPOCH_FOR_THRESHOLDS = 2
 _MODEL_DIR = Path('model-data')
-_TRAIN_BATCH_SIZE = 50
+_TRAIN_BATCH_SIZE = 32
 _IMAGE_OUTPUT_SIZE = 224
 _QUANT_CONFIG_PATH = Path('model-data/fakequant_vector.json')
 _REGULAR_CONFIG_PATH = Path('model-data/regular.json')
-_WEIGHTS_PATH = Path('model-data/weights_original.pickle')
+_WEIGHTS_PATH = Path('model-data/weights.pickle')
 
 
 def _load_thresholds(path: Union[str, Path]) -> Tuple[ThresholdsMappedData, ThresholdsMappedData]:
@@ -108,7 +108,7 @@ def _train_weights(
         weights=initial_weights,
     )
     weights_train_batch_stream = batch_stream_from_records(
-        records_paths=[_IMAGENET_TRAIN_RECORDS_PATHS[0]],
+        records_paths=_IMAGENET_TRAIN_RECORDS_PATHS,
         batch_size=_TRAIN_BATCH_SIZE,
         output_image_size=_IMAGE_OUTPUT_SIZE,
         crop_fraction=_CROP_FRACTION,
@@ -158,13 +158,6 @@ def main():
         'model-data/initial_thresholds_vector.pickle'
     )
 
-    # _eval_model(
-    #     _QUANT_CONFIG_PATH,
-    #     load_weights(_WEIGHTS_PATH),
-    #     initial_activations_thresholds,
-    #     initial_weights_thresholds,
-    # )  # TODO: remove
-
     # Train quantization thresholds
     trained_a_thresholds, trained_w_thresholds = _train_thresholds(
         quant_config_path=_QUANT_CONFIG_PATH,
@@ -174,13 +167,6 @@ def main():
         initial_w_ths_data=initial_weights_thresholds,
     )
     _save_data((trained_a_thresholds, trained_w_thresholds), 'model-data/user_trained_thresholds_vector.pickle')
-    # _eval_model(
-    #     _QUANT_CONFIG_PATH,
-    #     load_weights(_WEIGHTS_PATH),
-    #     trained_a_thresholds,
-    #     trained_w_thresholds,
-    # )  # TODO: remove
-
 
     # Quantization-aware weights training
     trained_weights = _train_weights(
@@ -191,12 +177,6 @@ def main():
         w_ths_data=trained_w_thresholds,
     )
     _save_data(trained_weights, 'model-data/user_trained_weights.pickle')
-    # _eval_model(
-    #     _QUANT_CONFIG_PATH,
-    #     trained_weights,
-    #     trained_a_thresholds,
-    #     trained_w_thresholds,
-    # )  # TODO: remove
 
 
 if __name__ == '__main__':
