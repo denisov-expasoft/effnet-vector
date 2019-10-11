@@ -1,5 +1,6 @@
 __all__ = [
     'train_adjustable_model',
+    'LearningStrategy',
 ]
 
 import logging
@@ -63,10 +64,11 @@ def train_adjustable_model(
         batch_stream: BaseBatchStream,
         tensorboard_log_dir: Path, *,
         number_of_epochs: int = _DEFAULT_NUMBER_OF_EPOCHS,
+        learning_strategy: LearningStrategy = _DEFAULT_LEARNING_STRATEGY,
 ) -> Path:
 
     trainable_graph, train_input, train_operations = _create_trainable_graph(
-        adjustable_network, reference_network
+        adjustable_network, reference_network, learning_strategy,
     )
 
     with tf.Session(graph=trainable_graph) as session:
@@ -115,9 +117,9 @@ def _rmse_loss(reference_output, adjustable_output):
 def _create_trainable_graph(
         adjustable_network: AdjustableThresholdsModel,
         reference_network: RegularModel,
+        learning_strategy: LearningStrategy,
 ) -> Tuple[tf.Graph, tf.Tensor, TrainOperations]:
 
-    learning_strategy = _DEFAULT_LEARNING_STRATEGY
     adj_graph, [adj_input], [adj_output] = adjustable_network.graph_info
     ref_graph, [ref_input], [ref_output] = reference_network.graph_info
 
