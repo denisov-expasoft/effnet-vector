@@ -35,7 +35,7 @@ def main(img_size):
     validation_bach_stream = batch_stream_from_records(
         Path('dataset-data/val_set'),
         batch_size=100,
-        output_image_size=_IMG_SIZE,
+        output_image_size=img_size,
         preprocess_fun=efficientnet_preprocess_function,
         crop_fraction=1.
     )
