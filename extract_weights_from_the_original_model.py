@@ -182,20 +182,25 @@ def _extract_weights(ckpt_dir_path):
         layer_to_node = json.load(file)
 
     layer_data = dict()
-    _EPSILON = graph_map.get_node_by_name(
+    _EPSILON = tf.make_ndarray(graph_map.get_node_by_name(
         'efficientnet-b0/model/blocks_4/tpu_batch_normalization_2/batchnorm/add/y'
-    ).attr['epsilon'].f
+    ).attr['value'].tensor)
     for layer_name in layer_to_node:
         if layer_to_node[layer_name][0] is None:
             continue
 
+        layer_params = get_layer_param(
+            layer_to_node[layer_name][0],
+            graph_map,
+        )
+
         if len(layer_to_node[layer_name]) == 1:
-            layer_data[layer_name] = get_layer_param(layer_to_node[layer_name][0], graph_map)
+            layer_data[layer_name] = layer_params
 
         if len(layer_to_node[layer_name]) == 2:
             layer_data[layer_name] = dict()
             bn = get_batch_norm_param(layer_to_node[layer_name][1], graph_map)
-            w = get_layer_param(layer_to_node[layer_name][0], graph_map)['weights']
+            w = layer_params['weights']
 
             w_scale = bn['gamma'] / (_EPSILON + bn['moving_variance']) ** (1 / 2)
 
@@ -204,8 +209,8 @@ def _extract_weights(ckpt_dir_path):
             else:
                 w2 = w * w_scale
 
-            if 'bias' in get_layer_param(layer_to_node[layer_name][0], graph_map):
-                bias = get_layer_param(layer_to_node[layer_name][0], graph_map)['bias']
+            if 'bias' in layer_params:
+                bias = layer_params['bias']
                 bias2 = (bias - bn['moving_mean']) * w_scale + bn['beta']
             else:
                 bias2 = -bn['moving_mean'] * w_scale + bn['beta']
