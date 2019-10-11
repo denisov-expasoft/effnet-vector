@@ -232,9 +232,8 @@ class FQRequantizationMetaLayer(FQMetaLayerEnvelope):
             a_min_ths, a_max_ths = self.activations_thresholds
             a_min_ths = self._copy_array_or_tensor_data(a_min_ths)
             a_max_ths = self._copy_array_or_tensor_data(a_max_ths)
-            activations_thresholds = a_min_ths, a_max_ths
 
-            meaningful_properties['activations_thresholds'] = activations_thresholds
+            meaningful_properties['activations_thresholds'] = a_min_ths, a_max_ths
 
         return meaningful_properties
 
