@@ -32,6 +32,7 @@ FAKEQUANT_ADJUSTABLE_WEIGHTS_METALAYERS = Registry(key_type=Slt)
 @FAKEQUANT_ADJUSTABLE_THRESHOLDS_METALAYERS.add_item_decorator([
     Slt.LAYER_INPUT,
     Slt.LAYER_ADD,
+    Slt.LAYER_MUL,
 ])
 class AdjThsRequantizationMetaLayer(FQRequantizationMetaLayer):
     def __init__(self, **layer_cfg):
@@ -135,6 +136,7 @@ class AdjThsMatrixOpsMetaLayer(AdjThsMetaLayerWithActivation, FQMatrixOpsMetaLay
 @FAKEQUANT_ADJUSTABLE_WEIGHTS_METALAYERS.add_item_decorator([
     Slt.LAYER_INPUT,
     Slt.LAYER_ADD,
+    Slt.LAYER_MUL,
 ])
 class AdjWeightsRequantizationMetaLayer(AdjThsRequantizationMetaLayer):
     pass
